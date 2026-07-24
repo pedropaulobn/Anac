@@ -1,0 +1,88 @@
+name: Coleta ANAC
+
+on:
+  schedule:
+    # 09:00 UTC = 06:00 no horario de Brasilia
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+    inputs:
+      fonte:
+        description: "Fonte a coletar"
+        required: false
+        default: "todas"
+        type: choice
+        options: [todas, siros, microdados, datasas]
+      explorar:
+        description: "Modo exploracao do DataSAS (nao baixa nada)"
+        required: false
+        default: false
+        type: boolean
+      completo:
+        description: "Varredura completa do historico"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: coleta-anac
+  cancel-in-progress: false
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Instalar navegador
+        run: python -m playwright install --with-deps chromium
+
+      - name: Executar coleta
+        run: |
+          if [ "${{ inputs.explorar }}" = "true" ]; then
+            python -m robo.main --fonte datasas --explorar
+          else
+            EXTRA=""
+            [ "${{ inputs.completo }}" = "true" ] && EXTRA="--completo"
+            python -m robo.main --fonte "${{ inputs.fonte || 'todas' }}" $EXTRA
+          fi
+
+      # Screenshot e HTML da pagina no momento da falha. Sem isso,
+      # depurar o DataSAS remotamente e adivinhacao.
+      - name: Guardar diagnostico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostico-${{ github.run_number }}
+          path: _tmp/diagnostico/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Atualizar estado e manifest
+        if: always()
+        run: |
+          git config user.name  "robo-anac"
+          git config user.email "actions@github.com"
+          git add manifest.json ESTADO.md
+          if git diff --cached --quiet; then
+            echo "Sem alteracoes de estado."
+          else
+            git commit -m "coleta $(date -u +'%Y-%m-%d')"
+            git pull --rebase --autostash || true
+            git push
+          fi
