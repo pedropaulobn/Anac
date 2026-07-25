@@ -1,64 +1,112 @@
 {
   "arquivos": {
+    "basica/202507": {
+      "bytes_zip": 9162865,
+      "coletado_em": "2026-07-25T10:21:30+00:00",
+      "impressao": "dc8831ae422bbd4a2f3cab2fd76e30f2011ab07338883ddcef3e52631128ca2d",
+      "sha256": "8b80c0c2c3caf31786e5a9270734040abac99298d8a6a35c9198c0aecbd83c0e",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2025/basica2025-07.zip",
+      "verificado_em": "2026-07-25T10:21:30+00:00"
+    },
     "basica/202508": {
+      "bytes_zip": 8896845,
       "coletado_em": "2026-07-24T17:52:58+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2025/basica202508.zip",
-      "verificado_em": "2026-07-24T17:52:58+00:00"
+      "impressao": "fa786fddbd282dee5b70828ac132e0d2447c1a3e9458eedb97107f3773767ca0",
+      "sha256": "8631c22990103696dfb4e13c08cefbb2582e4d07aa47b8950b14327dcc5ebeef",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2025/basica2025-08.zip",
+      "verificado_em": "2026-07-25T10:21:44+00:00"
     },
     "basica/202509": {
+      "bytes_zip": 8581228,
       "coletado_em": "2026-07-24T17:52:59+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2025/basica202509.zip",
-      "verificado_em": "2026-07-24T17:52:59+00:00"
+      "impressao": "ca3e90cd3434c452c3136c39666ed784dc374d6c83c730f297a1058b5a111748",
+      "sha256": "063f102869901a1aa60aea976b3e41647d18628f627743566891da977d0fc07d",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2025/basica2025-09.zip",
+      "verificado_em": "2026-07-25T10:21:57+00:00"
     },
     "basica/202510": {
+      "bytes_zip": 8990940,
       "coletado_em": "2026-07-24T17:53:00+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2025/basica202510.zip",
-      "verificado_em": "2026-07-24T17:53:00+00:00"
+      "impressao": "948db84f7f8b230597af9458ec13434fbd7f922279e32e4c120915556717e228",
+      "sha256": "eabd036a9dd37e150666aba2b0f9f1c57bc2908bf91864a4f6261f48fbe81636",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2025/basica2025-10.zip",
+      "verificado_em": "2026-07-25T10:22:10+00:00"
     },
     "basica/202511": {
+      "bytes_zip": 8689456,
       "coletado_em": "2026-07-24T17:53:00+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2025/basica202511.zip",
-      "verificado_em": "2026-07-24T17:53:00+00:00"
+      "impressao": "3486152ff26b6762a993234fa67c1d5850fef0ee648afc83b25c30c5742db90a",
+      "sha256": "9069d95b6bbb7d974ffea871ff06729a8966547be961080b4dab00b30e99aea8",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2025/basica2025-11.zip",
+      "verificado_em": "2026-07-25T10:22:23+00:00"
     },
     "basica/202512": {
+      "bytes_zip": 9171680,
       "coletado_em": "2026-07-24T17:53:00+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2025/basica202512.zip",
-      "verificado_em": "2026-07-24T17:53:00+00:00"
+      "impressao": "cdee745e4a989fad1fd28894a11d640619a4253c7e403618dc69629ad3b8c601",
+      "sha256": "f0f1de0c56b63d0ec96e8bb6a72f2736d10f0c5a2e51b0849ce8002631735143",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2025/basica2025-12.zip",
+      "verificado_em": "2026-07-25T10:22:38+00:00"
     },
     "basica/202601": {
+      "bytes_zip": 9484726,
       "coletado_em": "2026-07-24T17:53:00+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica202601.zip",
-      "verificado_em": "2026-07-24T17:53:00+00:00"
+      "impressao": "4e08eb3056040f53ee57c47d2c9e94c2ffd53cc938139f81cfef87c50accaad6",
+      "sha256": "f894a263535207eb889105ea850367cc96a55ae4d691b0af9f0e47ce5d036b8d",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica2026-01.zip",
+      "verificado_em": "2026-07-25T10:22:52+00:00"
     },
     "basica/202602": {
+      "bytes_zip": 8166855,
       "coletado_em": "2026-07-24T17:53:01+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica202602.zip",
-      "verificado_em": "2026-07-24T17:53:01+00:00"
+      "impressao": "ba4d7e8ffeacdb57af150a9753df368237a34b04b93af4aba30d9b5f23132ff9",
+      "sha256": "7c7d06d8900020621daa6663f2b15cdf233ad6bc708d9cb880b0ea0c7480c1ca",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica2026-02.zip",
+      "verificado_em": "2026-07-25T10:23:04+00:00"
     },
     "basica/202603": {
+      "bytes_zip": 8994454,
       "coletado_em": "2026-07-24T17:53:01+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica202603.zip",
-      "verificado_em": "2026-07-24T17:53:01+00:00"
+      "impressao": "f287621f488dc84aa6efa5221313ab1ff1563407e18546ae08c8f6b77d9fb66b",
+      "sha256": "edcb418592cdfd0affa97ddd0a92ef97e1a065e9219baecae59e4a5d43460cc9",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica2026-03.zip",
+      "verificado_em": "2026-07-25T10:23:18+00:00"
     },
     "basica/202604": {
+      "bytes_zip": 8336518,
       "coletado_em": "2026-07-24T17:45:07+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica202604.zip",
-      "verificado_em": "2026-07-24T17:53:02+00:00"
+      "impressao": "1c5bd539fddb1f820ca57984601aa9b17b5c23ad16cbe2dc30d38cb13522a975",
+      "sha256": "a86d9601fee726025e648551dd842ce0a753825a25bf91e94243e893209d4973",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica2026-04.zip",
+      "verificado_em": "2026-07-25T10:23:30+00:00"
     },
     "basica/202605": {
+      "bytes_zip": 8507442,
       "coletado_em": "2026-07-24T17:53:03+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica202605.zip",
-      "verificado_em": "2026-07-24T17:53:03+00:00"
+      "impressao": "48d1a3d1eb1a979e5f6a008f151f4e98da2445a7c5c518b610817a3b24962c30",
+      "sha256": "cb07e7b25dd52a2726dd071c2a1b0f2cfd0b891855b2ffec67e977d4a154d42c",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica2026-05.zip",
+      "verificado_em": "2026-07-25T10:23:43+00:00"
+    },
+    "basica/202606": {
+      "bytes_zip": 8377273,
+      "coletado_em": "2026-07-25T10:23:56+00:00",
+      "impressao": "e2833b9b32425a202bf00f40596a3789afd2f02646ffc37796a408bcd69602eb",
+      "sha256": "a754063e8caeb40767c2878dead7498a22eb5a41a9c2a5f373c28ed422b99d2b",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica202606.zip",
+      "verificado_em": "2026-07-25T10:23:56+00:00"
     },
     "basica/202607": {
       "coletado_em": "2026-07-24T17:53:08+00:00",
@@ -66,65 +114,113 @@
       "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica202607.zip",
       "verificado_em": "2026-07-24T17:53:08+00:00"
     },
+    "combinada/202507": {
+      "bytes_zip": 7797566,
+      "coletado_em": "2026-07-25T10:24:08+00:00",
+      "impressao": "631d1ceadb9348b7ef44cdfa4daf778cfbc11fdd57429ebcde5a8fcb4837f18f",
+      "sha256": "f161191bcbeef2f143943d73bdc970f0bacf0ce95e6063a90aaff785b8934732",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2025/combinada2025-07.zip",
+      "verificado_em": "2026-07-25T10:24:08+00:00"
+    },
     "combinada/202508": {
+      "bytes_zip": 6898762,
       "coletado_em": "2026-07-24T17:53:08+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2025/combinada202508.zip",
-      "verificado_em": "2026-07-24T17:53:08+00:00"
+      "impressao": "835b5d941efa7a9b894856aa30305fcae8e0c064b8dff9868e4a47aa7f2673ff",
+      "sha256": "955176d43421b5628b5d2b51c73f561d27973b63c3903d2c8c8fec9da737ea18",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2025/combinada2025-08.zip",
+      "verificado_em": "2026-07-25T10:24:18+00:00"
     },
     "combinada/202509": {
+      "bytes_zip": 6675447,
       "coletado_em": "2026-07-24T17:53:08+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2025/combinada202509.zip",
-      "verificado_em": "2026-07-24T17:53:08+00:00"
+      "impressao": "d206c12ede588eb0e8c7ec2de9fb5bd6f42625e51775f0e6fe45c79dce536e6a",
+      "sha256": "da9dc6f16e0c942d9b1d2a4752e2e5d3623d87793e7e860cdf22c74570f6770a",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2025/combinada2025-09.zip",
+      "verificado_em": "2026-07-25T10:24:28+00:00"
     },
     "combinada/202510": {
+      "bytes_zip": 7452641,
       "coletado_em": "2026-07-24T17:53:08+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2025/combinada202510.zip",
-      "verificado_em": "2026-07-24T17:53:08+00:00"
+      "impressao": "4a7e588ddfc6a076980834ec382180452cac07edce6c6c31de50a5ee01741cae",
+      "sha256": "576203e3715c96288964b57e6ed573dda30bd701a8982b2edc7d510ba2dae8a9",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2025/combinada2025-10.zip",
+      "verificado_em": "2026-07-25T10:24:40+00:00"
     },
     "combinada/202511": {
+      "bytes_zip": 6718094,
       "coletado_em": "2026-07-24T17:53:08+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2025/combinada202511.zip",
-      "verificado_em": "2026-07-24T17:53:08+00:00"
+      "impressao": "fe1e5a0c6e91e0bacdf2ad11b8ac8f44cfa59456db91e3f5f93671bf8da9f521",
+      "sha256": "4f188885a9d79f428a2e6b03a343ae5b0a9c3ab249eebd90ff3ed53454cc827c",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2025/combinada2025-11.zip",
+      "verificado_em": "2026-07-25T10:24:50+00:00"
     },
     "combinada/202512": {
+      "bytes_zip": 7140904,
       "coletado_em": "2026-07-24T17:53:08+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2025/combinada202512.zip",
-      "verificado_em": "2026-07-24T17:53:08+00:00"
+      "impressao": "65cf9bc5a7840f0b6e0693e467411d0c936f01c85a131ad3ee7508ef0bd64d3f",
+      "sha256": "2b634d391893621cf77a6f4543ca5ab3e55212519faa19a8bf7104344799e098",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2025/combinada2025-12.zip",
+      "verificado_em": "2026-07-25T10:25:01+00:00"
     },
     "combinada/202601": {
+      "bytes_zip": 7320986,
       "coletado_em": "2026-07-24T17:53:09+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada202601.zip",
-      "verificado_em": "2026-07-24T17:53:09+00:00"
+      "impressao": "ca7e7d456dcd8b564081058a0041ea643761b28b2ed881e688901e77bd0bd5b4",
+      "sha256": "242a6bd15fd67dc75344d45056fde886017f61fef1febed8f006a89739a1e35b",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada2026-01.zip",
+      "verificado_em": "2026-07-25T10:25:12+00:00"
     },
     "combinada/202602": {
+      "bytes_zip": 6284458,
       "coletado_em": "2026-07-24T17:53:09+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada202602.zip",
-      "verificado_em": "2026-07-24T17:53:09+00:00"
+      "impressao": "e5acb3d5f09fe0712878546aed5e45b7a9f5cc436f84bee746adc9a4a57a875f",
+      "sha256": "7fbf90ce752b28ed1adfc6d676665f524c86327aa91bd68216ffa149a5f428da",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada2026-02.zip",
+      "verificado_em": "2026-07-25T10:25:22+00:00"
     },
     "combinada/202603": {
+      "bytes_zip": 7440708,
       "coletado_em": "2026-07-24T17:53:09+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada202603.zip",
-      "verificado_em": "2026-07-24T17:53:09+00:00"
+      "impressao": "51059a58879c9fe09ba7e79f833d0332ca727dfdcd9d794e9f9fd80e8ca9705e",
+      "sha256": "fef04a6c69e60ad3e6881f287fb53d412952ef1a25dc61791fd29bd2c7c86e98",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada2026-03.zip",
+      "verificado_em": "2026-07-25T10:25:33+00:00"
     },
     "combinada/202604": {
+      "bytes_zip": 7059520,
       "coletado_em": "2026-07-24T17:45:07+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada202604.zip",
-      "verificado_em": "2026-07-24T17:53:09+00:00"
+      "impressao": "7a2341d3f2e45bfd8d667f7b785a9cfb90e69d36a65f977582ee7be88b88520d",
+      "sha256": "58389f255d183d4a1bf01534540ecf7ba4b82c125b1eb307edd06db5ef05e542",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada2026-04.zip",
+      "verificado_em": "2026-07-25T10:25:44+00:00"
     },
     "combinada/202605": {
+      "bytes_zip": 7323843,
       "coletado_em": "2026-07-24T17:53:09+00:00",
-      "situacao": "nao_publicado",
-      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada202605.zip",
-      "verificado_em": "2026-07-24T17:53:09+00:00"
+      "impressao": "a1b2522eca47f88941527705bc8c207d05f7fc510e5e44fb65c43611e9749033",
+      "sha256": "0119e237d47b8de4177a774789726e4a7f3212756de905017a7ffb64cb11ed13",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada2026-05.zip",
+      "verificado_em": "2026-07-25T10:25:55+00:00"
+    },
+    "combinada/202606": {
+      "bytes_zip": 7127573,
+      "coletado_em": "2026-07-25T10:26:06+00:00",
+      "impressao": "504362598b8aa65309604b212fa344f0fca168c486c129679b750a3759263145",
+      "sha256": "89c9b9dbfee2ed67180964b81cc52dee24e8320bce850923e350334e729c31fa",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada202606.zip",
+      "verificado_em": "2026-07-25T10:26:06+00:00"
     },
     "combinada/202607": {
       "coletado_em": "2026-07-24T17:53:13+00:00",
@@ -133,14 +229,14 @@
       "verificado_em": "2026-07-24T17:53:13+00:00"
     },
     "siros/voos": {
-      "bytes_zip": 12206740,
+      "bytes_zip": 12208755,
       "coletado_em": "2026-07-25T01:53:08+00:00",
-      "impressao": "9c4b3cadebe63dd9af0aacc16a4de79866645bdb827dbddc6a7b85fcb62c71df",
-      "publicado_em": "7/24/2026 5:19 AM",
-      "sha256": "f8d55cb181e87cd6f69b4f84c716c543fa4382e0693e48944ce8d94460297394",
-      "situacao": "novo",
+      "impressao": "fe8a380f1b1a9f8083c581811ccf69d1582b7523fd7d52b8446649cd77f6610a",
+      "publicado_em": "7/25/2026 5:18 AM",
+      "sha256": "a451dae85faa8915bb2e021cce0d3403381003a6f86d7e6188207a581f637c81",
+      "situacao": "atualizado",
       "url": "https://siros.anac.gov.br/siros/registros/voos/voos.zip",
-      "verificado_em": "2026-07-25T01:53:08+00:00"
+      "verificado_em": "2026-07-25T10:21:14+00:00"
     },
     "tarifas/dom/2026": {
       "bytes_zip": 21191889,
@@ -156,9 +252,9 @@
       },
       "publicado_em": "28/04/2026 10:32:02",
       "sha256": "44215e806006953e92aaecf7ebeb75e413a4e42966ff3c48b9c4de259a9eb4b3",
-      "situacao": "novo",
+      "situacao": "inalterado",
       "url": "https://sas.anac.gov.br/sas/downloads/view/frmDownload.aspx",
-      "verificado_em": "2026-07-25T01:55:23+00:00"
+      "verificado_em": "2026-07-25T10:26:16+00:00"
     },
     "tarifas/int/2025": {
       "bytes_zip": 3493301,
@@ -185,7 +281,7 @@
       "verificado_em": "2026-07-25T01:55:38+00:00"
     }
   },
-  "gerado_em": "2026-07-25T01:59:28+00:00",
+  "gerado_em": "2026-07-25T10:36:44+00:00",
   "pagina_microdados": {
     "atualizado": "22/07/2026 16h34",
     "inventario": {
@@ -199,6 +295,6 @@
       }
     },
     "publicado": "11/08/2020 10h55",
-    "verificado_em": "2026-07-25T01:44:49+00:00"
+    "verificado_em": "2026-07-25T10:21:15+00:00"
   }
 }
