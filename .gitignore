@@ -1,4 +1,13 @@
+# Temporarios do robo (zips baixados, extraidos, diagnostico)
+_tmp/
 __pycache__/
 *.pyc
-.venv/
-_tmp/
+
+# Scripts de teste locais (nao vao para producao)
+teste_*.py
+sondagem*.py
+diagnostico.py
+
+# Credenciais (nunca versionar)
+rclone.conf
+*.token

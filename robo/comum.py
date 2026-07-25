@@ -5,6 +5,9 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import os
+import shutil
+import subprocess
 import time
 import zipfile
 from datetime import datetime, timezone
@@ -25,6 +28,25 @@ UA = (
 TENTATIVAS = 4
 ESPERA_BASE = 5  # segundos; cresce exponencialmente
 LIMITE_ASSET_MB = 2048  # teto do GitHub por asset de release
+
+# Onde procurar o rclone. No PC do Pedro esta em C:\Backup\Rclone;
+# no GitHub Actions (Linux) esta no PATH como "rclone".
+RCLONE_WINDOWS = r"C:\Backup\Rclone\rclone.exe"
+
+
+def rclone_bin() -> str:
+    """Descobre o executavel do rclone conforme o ambiente.
+
+    Prioridade: caminho fixo do Windows (se existir) -> rclone no PATH.
+    Isso permite o mesmo codigo rodar no PC e no GitHub Actions.
+    """
+    if os.path.exists(RCLONE_WINDOWS):
+        return RCLONE_WINDOWS
+    achado = shutil.which("rclone")
+    if achado:
+        return achado
+    # Ultimo recurso: tenta "rclone" e deixa o subprocess falhar com mensagem clara.
+    return "rclone"
 
 
 def agora() -> str:
@@ -158,10 +180,17 @@ def salvar(conteudo: bytes, nome: str) -> Path:
     return caminho
 
 
-def extrair(conteudo_zip: bytes, destino: Path, nome_canonico: str | None = None) -> list[str]:
-    """Extrai .csv/.txt de dentro do zip. Reservado para a etapa 2."""
+def extrair(conteudo_zip: bytes, destino: Path) -> list[Path]:
+    """Extrai .csv/.txt de dentro do zip, mantendo nomes originais.
+
+    Procura por qualquer arquivo .csv ou .txt dentro do ZIP (case-insensitive).
+    Preserva o nome original exatamente como esta no arquivo.
+
+    Devolve lista de Path dos arquivos extraidos. Se nenhum arquivo
+    .csv/.txt existe, levanta RuntimeError.
+    """
     destino.mkdir(parents=True, exist_ok=True)
-    escritos: list[str] = []
+    escritos: list[Path] = []
 
     with zipfile.ZipFile(io.BytesIO(conteudo_zip)) as z:
         alvos = [
@@ -172,13 +201,75 @@ def extrair(conteudo_zip: bytes, destino: Path, nome_canonico: str | None = None
             raise RuntimeError("zip sem .csv/.txt: " + ", ".join(z.namelist()[:20]))
 
         for info in alvos:
-            nome = nome_canonico if (nome_canonico and len(alvos) == 1) else Path(info.filename).name
-            caminho = destino / nome
+            caminho = destino / Path(info.filename).name
             with z.open(info) as origem, open(caminho, "wb") as saida:
                 saida.write(origem.read())
-            escritos.append(nome)
+            tam_mb = caminho.stat().st_size / 1_048_576
+            print(f"  extraido: {caminho.name} ({tam_mb:.1f} MB)")
+            escritos.append(caminho)
 
     return escritos
+
+
+def enviar_gdrive(caminho_local: Path) -> bool:
+    """Envia arquivo extraido para a pasta correta no Google Drive via rclone.
+
+    Detecta a fonte pelo nome do arquivo e escolhe o destino:
+    - basica, combinada -> Fraport/Anac/Movimentacao/
+    - tarifas (DOM/INT)  -> Fraport/Anac/Ticket/
+    - siros              -> Fraport/Anac/Siros/ (substitui, nao acumula)
+
+    O executavel do rclone e descoberto por rclone_bin(), que funciona
+    tanto no PC do Pedro quanto no GitHub Actions.
+
+    Devolve True se enviou com sucesso, False se falhou.
+    """
+    if not caminho_local.exists():
+        print(f"  ERRO: {caminho_local} nao existe")
+        return False
+
+    nome = caminho_local.name.lower()
+
+    # Detectar fonte e destino
+    if "basica" in nome or "combinada" in nome:
+        destino = "gdrive:Fraport/Anac/Movimentacao/"
+        modo = "acumula"
+    elif "tarifa" in nome or "internacional" in nome or "domestica" in nome:
+        destino = "gdrive:Fraport/Anac/Ticket/"
+        modo = "acumula"
+    elif "siros" in nome or "voos" in nome:
+        destino = "gdrive:Fraport/Anac/Siros/"
+        modo = "substitui"
+    else:
+        print(f"  AVISO: nao consegui classificar {nome}; usando Movimentacao")
+        destino = "gdrive:Fraport/Anac/Movimentacao/"
+        modo = "acumula"
+
+    exe = rclone_bin()
+
+    try:
+        # sync (SIROS) deleta o que nao existe local; copy (resto) so envia.
+        acao = "sync" if modo == "substitui" else "copy"
+        cmd = [exe, acao, str(caminho_local), destino, "--verbose"]
+
+        print(f"  enviando [{modo}]: {nome} -> {destino}")
+        resultado = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+
+        if resultado.returncode == 0:
+            tam = caminho_local.stat().st_size / 1_048_576
+            print(f"  ok: {nome} ({tam:.1f} MB) em {destino}")
+            return True
+
+        print(f"  ERRO ao enviar (codigo {resultado.returncode}):")
+        print(f"  {resultado.stderr.strip()}")
+        return False
+
+    except FileNotFoundError:
+        print(f"  ERRO: rclone nao encontrado em '{exe}'")
+        return False
+    except Exception as e:  # noqa: BLE001
+        print(f"  ERRO: {e}")
+        return False
 
 
 def carregar_manifest() -> dict:

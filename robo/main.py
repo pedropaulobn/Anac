@@ -1,7 +1,16 @@
 """Ponto de entrada do robo de coleta ANAC.
 
-Etapa 1: baixa os .zip originais e publica como assets de GitHub Releases.
-Nenhum tratamento e nenhuma extracao -- o arquivo fica como a ANAC entregou.
+Fluxo: cada fonte baixa o .zip da ANAC; o robo extrai o(s) .csv/.txt de
+dentro e envia para a pasta correta do Google Drive via rclone. O .zip e
+descartado -- so o arquivo extraido interessa. Nao ha publicacao em
+Release: o Drive e o destino final.
+
+O manifest.json (estado que o robo le para saber o que ja pegou) e o
+ESTADO.md (retrato legivel) ficam no proprio repositorio.
+
+Se qualquer fonte ou envio falhar, o robo registra, segue com as demais,
+e termina com codigo 1 -- o que dispara a notificacao automatica de
+falha do GitHub Actions.
 """
 
 from __future__ import annotations
@@ -9,30 +18,43 @@ from __future__ import annotations
 import argparse
 import sys
 from datetime import date
+from pathlib import Path
 
-from . import comum, datasas, estado, microdados, publicar, siros
-
-TITULOS = {
-    "siros-latest": "SIROS - voos futuros (ultima coleta)",
-}
+from . import comum, datasas, estado, microdados, siros
 
 
-def titulo_release(tag: str) -> str:
-    if tag in TITULOS:
-        return TITULOS[tag]
-    if tag.startswith("microdados-"):
-        return f"Microdados basica/combinada - {tag.split('-')[1]}"
-    if tag.startswith("tarifas-"):
-        return f"Tarifas DataSAS DOM/INT - {tag.split('-')[1]}"
-    return tag
+def _extrair_e_enviar(caminho_zip: Path, sem_drive: bool) -> list[str]:
+    """Extrai os .csv/.txt do zip e envia cada um ao Drive.
+
+    Devolve a lista de motivos de falha (vazia se tudo correu bem).
+    O zip permanece em _tmp/ ate o fim da execucao; nao e publicado.
+    """
+    falhas: list[str] = []
+
+    try:
+        conteudo = caminho_zip.read_bytes()
+        extraidos = comum.extrair(conteudo, comum.tmp() / "extraidos")
+    except Exception as e:  # noqa: BLE001
+        print(f"  [ERRO] extracao de {caminho_zip.name}: {e}", file=sys.stderr)
+        return [f"extrair:{caminho_zip.name}"]
+
+    if sem_drive:
+        print(f"  [--sem-drive] {len(extraidos)} arquivo(s) extraido(s), nao enviados")
+        return []
+
+    for arquivo in extraidos:
+        if not comum.enviar_gdrive(arquivo):
+            falhas.append(f"drive:{arquivo.name}")
+
+    return falhas
 
 
 def main() -> int:
     p = argparse.ArgumentParser(description="Coleta de bases abertas da ANAC")
     p.add_argument("--fonte", choices=["siros", "microdados", "datasas", "todas"],
                    default="todas")
-    p.add_argument("--local", action="store_true",
-                   help="nao publica; deixa os zips em _tmp/ para inspecao")
+    p.add_argument("--sem-drive", action="store_true",
+                   help="extrai mas nao envia ao Drive (so testa a coleta)")
     p.add_argument("--explorar", action="store_true",
                    help="so para datasas: imprime a estrutura da pagina e sai")
     p.add_argument("--completo", action="store_true",
@@ -46,7 +68,7 @@ def main() -> int:
         return 0
 
     manifest = comum.carregar_manifest()
-    pendentes: list[tuple[str, str, object]] = []
+    pendentes: list[tuple[str, str, Path]] = []
     falhas: list[str] = []
 
     # Dia 28: varredura completa das tarifas, que nao tem porteiro proprio.
@@ -70,23 +92,14 @@ def main() -> int:
             print(f"[ERRO] fonte '{nome}': {e}", file=sys.stderr)
             falhas.append(nome)
 
-    # Agrupa por release para nao chamar o gh uma vez por arquivo.
-    if pendentes and not args.local:
-        por_tag: dict[str, list] = {}
-        for tag, _, caminho in pendentes:
-            por_tag.setdefault(tag, []).append(caminho)
-        for tag, arquivos in sorted(por_tag.items()):
-            try:
-                publicar.enviar(tag, titulo_release(tag), arquivos)
-            except Exception as e:  # noqa: BLE001
-                print(f"[ERRO] publicacao em '{tag}': {e}", file=sys.stderr)
-                falhas.append(f"publicar:{tag}")
-    elif pendentes:
-        print(f"\n[--local] {len(pendentes)} arquivo(s) em _tmp/, sem publicar:")
+    # Extrai e envia cada zip coletado ao Drive.
+    if pendentes:
+        print(f"\n== extraindo e enviando {len(pendentes)} arquivo(s) ao Drive ==")
         for _, chave, caminho in pendentes:
-            print(f"  {chave} -> {caminho}")
+            print(f"\n[{chave}]")
+            falhas.extend(_extrair_e_enviar(caminho, args.sem_drive))
     else:
-        print("\nNada novo para publicar.")
+        print("\nNada novo para enviar.")
 
     comum.salvar_manifest(manifest)
     estado.escrever(manifest)

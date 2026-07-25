@@ -35,9 +35,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
 
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     steps:
       - uses: actions/checkout@v4
 
@@ -52,6 +49,18 @@ jobs:
       - name: Instalar navegador
         run: python -m playwright install --with-deps chromium
 
+      - name: Instalar rclone
+        run: |
+          curl -fsSL https://rclone.org/install.sh | sudo bash
+
+      - name: Configurar credencial do rclone
+        env:
+          RCLONE_CONF: ${{ secrets.RCLONE_CONFIG_GDRIVE }}
+        run: |
+          mkdir -p ~/.config/rclone
+          printf '%s\n' "$RCLONE_CONF" > ~/.config/rclone/rclone.conf
+          echo "rclone.conf criado com $(wc -l < ~/.config/rclone/rclone.conf) linha(s)"
+
       - name: Executar coleta
         run: |
           if [ "${{ inputs.explorar }}" = "true" ]; then
@@ -62,8 +71,7 @@ jobs:
             python -m robo.main --fonte "${{ inputs.fonte || 'todas' }}" $EXTRA
           fi
 
-      # Screenshot e HTML da pagina no momento da falha. Sem isso,
-      # depurar o DataSAS remotamente e adivinhacao.
+      # Screenshot e HTML da pagina no momento da falha do DataSAS.
       - name: Guardar diagnostico
         if: always()
         uses: actions/upload-artifact@v4

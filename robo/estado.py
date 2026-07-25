@@ -150,8 +150,8 @@ def escrever(m: dict) -> None:
         "", "---", "",
         f"Períodos rastreados: **{len(arquivos)}**",
         "",
-        "Arquivos ficam nas *Releases* do repositório. Detalhe técnico completo",
-        "(hash, tamanho, datas por mês) está em `manifest.json`.",
+        "Os CSV/TXT extraídos vão para a pasta do Google Drive. Detalhe técnico",
+        "completo (hash, tamanho, datas por mês) está em `manifest.json`.",
         "",
     ]
 

@@ -1,75 +1,60 @@
-# ANAC — coleta automatizada de dados abertos
+# Robô de coleta ANAC
 
-Robô que acompanha diariamente as bases públicas da ANAC e publica o
-`.zip` **original** como asset de GitHub Release. Sem tratamento, sem
-extração — o arquivo fica como a ANAC entregou.
+Coleta diária e automática de dados abertos da ANAC. Baixa os arquivos
+novos de cada fonte, extrai o CSV/TXT de dentro do ZIP e envia para uma
+pasta no Google Drive. Roda sozinho no GitHub Actions.
 
-## Fontes e sinais
+## O que ele coleta
 
-Cada fonte expõe um sinal diferente de "isso mudou". O robô usa o melhor
-disponível em cada uma, medido por sondagem do servidor real:
-
-| Fonte | Sinal de mudança | Release |
+| Fonte | Conteúdo | Pasta no Drive |
 |---|---|---|
-| SIROS | data + tamanho na listagem de diretório | `siros-latest` |
-| Microdados | "Atualizado em" da página + tamanho por arquivo | `microdados-{ano}` |
-| Tarifas | coluna *Data Hora Arquivo*, por mês | `tarifas-{ano}` |
+| Microdados básica | Movimentação mensal | `Fraport/Anac/Movimentacao` |
+| Microdados combinada | Movimentação mensal | `Fraport/Anac/Movimentacao` |
+| Tarifas DOM/INT | Tarifas aéreas mensais | `Fraport/Anac/Ticket` |
+| SIROS | Voos futuros (diário) | `Fraport/Anac/Siros` |
 
-## Como decide baixar
+Microdados e tarifas **acumulam** (cada mês vira um arquivo). SIROS
+**substitui** (sempre o mais recente).
 
-**SIROS** — lê a listagem; se data e tamanho baterem com o registro, não baixa.
+## Como decide o que baixar
 
-**Microdados** — a página serve de porteiro. Se o "Atualizado em" não mudou,
-não varre nada. O avanço (procurar o mês seguinte) roda todo dia de qualquer
-forma: são duas sondagens de um byte.
+Nunca baixa o que já pegou. Cada fonte tem seu sinal de novidade:
 
-**Tarifas** — lê a tabela do ano e compara as datas mês a mês. Só clica em
-"Baixar Marcados" se algum mês é novo ou teve a data alterada. Varredura
-completa de todos os anos no dia 28.
+- **Microdados** — lê o inventário completo da página (um link por mês) e
+  baixa só os meses ausentes. A data "Atualizado em" da página funciona
+  como porteiro: se não mudou, não reconfere tamanhos.
+- **Tarifas** — lê a tabela com a data de publicação de cada mês e baixa
+  só o que é novo ou mudou de data.
+- **SIROS** — compara data e tamanho da listagem antes de baixar.
 
-Nada disso baixa arquivo para descobrir se mudou.
+## Destino: Google Drive via rclone
 
-## Detalhes técnicos que valem saber
+Os arquivos vão para o Drive pelo `rclone`. A credencial fica no secret
+`RCLONE_CONFIG_GDRIVE` do repositório. No PC, o rclone é procurado em
+`C:\Backup\Rclone\rclone.exe`; no Actions, no PATH do sistema.
 
-O Apache na frente do `gov.br` recusa **HEAD** com 403, mas aceita **GET
-com Range**. Por isso `comum.propriedades()` pede o byte 0 e lê o
-`Content-Range` — traz o tamanho exato por um byte de tráfego.
+## Rodar
 
-Esse servidor **não emite `Last-Modified`** para os arquivos. Logo, o único
-indicador de republicação por arquivo nos microdados é o tamanho em bytes.
-
-Os zips do DataSAS são gerados sob demanda e carregam o horário da geração,
-então o SHA-256 muda a cada download mesmo sem dado novo. A comparação usa
-`comum.impressao()`: nome, tamanho e CRC de cada membro, ordenados.
-
-## Por que Release e não pasta
-
-Os CSVs descompactados chegam a 166 MB, e o Git **rejeita** arquivos acima
-de 100 MB. Releases aceitam 2 GB por asset e não contam no tamanho do
-repositório. Comprimido, `basica202606` cai de 71 MB para 8 MB.
-
-## Uso
-
-```bash
-pip install -r requirements.txt
-python -m playwright install chromium
-
-python -m robo.main --fonte datasas --explorar   # estrutura da página
-python -m robo.main --local                      # baixa em _tmp/, não publica
-python -m robo.main                              # coleta e publica
-python -m robo.main --completo                   # força varredura do histórico
+```
+python -m robo.main                    # coleta tudo e envia ao Drive
+python -m robo.main --fonte siros      # só uma fonte
+python -m robo.main --sem-drive        # extrai mas não envia (teste)
+python -m robo.main --completo         # reconfere todo o histórico
+python -m robo.main --backfill         # baixa todo o inventário (2000+)
+python -m robo.main --explorar         # inspeciona a página do DataSAS
 ```
 
-Publicar exige `GH_TOKEN`. No Actions vem pronto.
+## Estado
 
-## Arquivos de acompanhamento
+- `manifest.json` — o que o robô já pegou (ele lê para saber onde parou)
+- `ESTADO.md` — retrato legível da última coleta
 
-`ESTADO.md` — tabela legível: último período de cada fonte, quando a ANAC
-publicou, quando o robô pegou. Reescrito a cada execução.
+Se uma fonte falhar, o robô registra, segue com as demais e termina com
+erro — o que dispara a notificação automática de falha do GitHub.
 
-`manifest.json` — detalhe por período: tamanho, hash, impressão de conteúdo,
-datas por mês das tarifas, situação. É o que o robô consulta para saber onde
-parou.
+## Agendamento
 
-O commit desses dois a cada execução também mantém o agendamento vivo — o
-GitHub desativa cron após ~60 dias sem atividade no repositório.
+Cron diário às 09:00 UTC (06:00 Brasília). No dia 28, varredura completa
+das tarifas. O commit de `manifest.json` e `ESTADO.md` a cada execução
+mantém o agendamento ativo (o GitHub desliga cron após ~60 dias sem
+atividade).
