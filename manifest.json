@@ -158,7 +158,7 @@
       "sha256": "f8d55cb181e87cd6f69b4f84c716c543fa4382e0693e48944ce8d94460297394",
       "situacao": "inalterado",
       "url": "https://siros.anac.gov.br/siros/registros/voos/voos.zip",
-      "verificado_em": "2026-07-25T00:25:16+00:00"
+      "verificado_em": "2026-07-25T01:03:03+00:00"
     },
     "tarifas/dom/2026": {
       "bytes_zip": 21191889,
@@ -174,9 +174,9 @@
       },
       "publicado_em": "28/04/2026 10:32:02",
       "sha256": "44215e806006953e92aaecf7ebeb75e413a4e42966ff3c48b9c4de259a9eb4b3",
-      "situacao": "novo",
+      "situacao": "inalterado",
       "url": "https://sas.anac.gov.br/sas/downloads/view/frmDownload.aspx",
-      "verificado_em": "2026-07-25T00:26:22+00:00"
+      "verificado_em": "2026-07-25T01:03:12+00:00"
     },
     "tarifas/int/2025": {
       "bytes_zip": 3493301,
@@ -203,7 +203,7 @@
       "verificado_em": "2026-07-24T17:53:35+00:00"
     }
   },
-  "gerado_em": "2026-07-25T00:26:50+00:00",
+  "gerado_em": "2026-07-25T01:03:16+00:00",
   "pagina_microdados": {
     "atualizado": "22/07/2026 16h34",
     "inventario": {
@@ -217,6 +217,6 @@
       }
     },
     "publicado": "11/08/2020 10h55",
-    "verificado_em": "2026-07-25T00:25:17+00:00"
+    "verificado_em": "2026-07-25T01:03:04+00:00"
   }
 }
