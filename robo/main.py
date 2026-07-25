@@ -23,7 +23,7 @@ from pathlib import Path
 from . import comum, datasas, estado, microdados, siros
 
 
-def _extrair_e_enviar(caminho_zip: Path, sem_drive: bool) -> list[str]:
+def _extrair_e_enviar(caminho_zip: Path, chave: str, sem_drive: bool) -> list[str]:
     """Extrai os .csv/.txt do zip e envia cada um ao Drive.
 
     Devolve a lista de motivos de falha (vazia se tudo correu bem).
@@ -43,7 +43,7 @@ def _extrair_e_enviar(caminho_zip: Path, sem_drive: bool) -> list[str]:
         return []
 
     for arquivo in extraidos:
-        if not comum.enviar_gdrive(arquivo):
+        if not comum.enviar_gdrive(arquivo, chave):
             falhas.append(f"drive:{arquivo.name}")
 
     return falhas
@@ -97,7 +97,7 @@ def main() -> int:
         print(f"\n== extraindo e enviando {len(pendentes)} arquivo(s) ao Drive ==")
         for _, chave, caminho in pendentes:
             print(f"\n[{chave}]")
-            falhas.extend(_extrair_e_enviar(caminho, args.sem_drive))
+            falhas.extend(_extrair_e_enviar(caminho, chave, args.sem_drive))
     else:
         print("\nNada novo para enviar.")
 

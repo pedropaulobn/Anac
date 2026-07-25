@@ -211,13 +211,36 @@ def extrair(conteudo_zip: bytes, destino: Path) -> list[Path]:
     return escritos
 
 
-def enviar_gdrive(caminho_local: Path) -> bool:
+def _destino_drive(chave: str) -> tuple[str, str]:
+    """Decide a pasta do Drive a partir da ORIGEM (a chave do manifest),
+    nao do nome do arquivo.
+
+    A chave diz de onde o arquivo veio: 'basica/202606', 'combinada/...',
+    'tarifas/dom/2026', 'tarifas/int/2025', 'siros/voos'. O nome do
+    arquivo extraido nao e confiavel -- tarifa DOM vem como '202601.CSV'
+    (numero puro), e um mesmo numero poderia colidir entre fontes. A
+    origem, o robo sempre conhece.
+
+    Devolve (pasta_no_drive, modo) onde modo e 'acumula' ou 'substitui'.
+    """
+    if chave.startswith("basica/") or chave.startswith("combinada/"):
+        return "gdrive:Fraport/Anac/Movimentacao/", "acumula"
+    if chave.startswith("tarifas/dom/"):
+        return "gdrive:Fraport/Anac/Ticket/DOM/", "acumula"
+    if chave.startswith("tarifas/int/"):
+        return "gdrive:Fraport/Anac/Ticket/INT/", "acumula"
+    if chave.startswith("siros/"):
+        return "gdrive:Fraport/Anac/Siros/", "substitui"
+    # Origem desconhecida: falha explicita, para nao espalhar em pasta errada.
+    raise ValueError(f"origem nao reconhecida para o Drive: {chave!r}")
+
+
+def enviar_gdrive(caminho_local: Path, chave: str) -> bool:
     """Envia arquivo extraido para a pasta correta no Google Drive via rclone.
 
-    Detecta a fonte pelo nome do arquivo e escolhe o destino:
-    - basica, combinada -> Fraport/Anac/Movimentacao/
-    - tarifas (DOM/INT)  -> Fraport/Anac/Ticket/
-    - siros              -> Fraport/Anac/Siros/ (substitui, nao acumula)
+    A pasta e escolhida por _destino_drive(chave), a partir da ORIGEM --
+    nunca do nome do arquivo. 'chave' e a mesma do manifest: 'basica/...',
+    'tarifas/dom/...', 'siros/voos', etc.
 
     O executavel do rclone e descoberto por rclone_bin(), que funciona
     tanto no PC do Pedro quanto no GitHub Actions.
@@ -228,22 +251,11 @@ def enviar_gdrive(caminho_local: Path) -> bool:
         print(f"  ERRO: {caminho_local} nao existe")
         return False
 
-    nome = caminho_local.name.lower()
-
-    # Detectar fonte e destino
-    if "basica" in nome or "combinada" in nome:
-        destino = "gdrive:Fraport/Anac/Movimentacao/"
-        modo = "acumula"
-    elif "tarifa" in nome or "internacional" in nome or "domestica" in nome:
-        destino = "gdrive:Fraport/Anac/Ticket/"
-        modo = "acumula"
-    elif "siros" in nome or "voos" in nome:
-        destino = "gdrive:Fraport/Anac/Siros/"
-        modo = "substitui"
-    else:
-        print(f"  AVISO: nao consegui classificar {nome}; usando Movimentacao")
-        destino = "gdrive:Fraport/Anac/Movimentacao/"
-        modo = "acumula"
+    try:
+        destino, modo = _destino_drive(chave)
+    except ValueError as e:
+        print(f"  ERRO: {e}")
+        return False
 
     exe = rclone_bin()
 
@@ -252,12 +264,12 @@ def enviar_gdrive(caminho_local: Path) -> bool:
         acao = "sync" if modo == "substitui" else "copy"
         cmd = [exe, acao, str(caminho_local), destino, "--verbose"]
 
-        print(f"  enviando [{modo}]: {nome} -> {destino}")
+        print(f"  enviando [{modo}]: {caminho_local.name} -> {destino}")
         resultado = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
 
         if resultado.returncode == 0:
             tam = caminho_local.stat().st_size / 1_048_576
-            print(f"  ok: {nome} ({tam:.1f} MB) em {destino}")
+            print(f"  ok: {caminho_local.name} ({tam:.1f} MB) em {destino}")
             return True
 
         print(f"  ERRO ao enviar (codigo {resultado.returncode}):")
