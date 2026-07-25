@@ -25,8 +25,10 @@ UA = (
     "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 )
 
-TENTATIVAS = 4
-ESPERA_BASE = 5  # segundos; cresce exponencialmente
+TENTATIVAS = 3
+ESPERA_BASE = 4  # segundos; cresce exponencialmente
+TIMEOUT_CONEXAO = 30  # segundos para estabelecer conexao (nao o download todo)
+TIMEOUT_LEITURA = 300  # segundos para baixar o corpo, uma vez conectado
 LIMITE_ASSET_MB = 2048  # teto do GitHub por asset de release
 
 # Onde procurar o rclone. No PC do Pedro esta em C:\Backup\Rclone;
@@ -67,27 +69,45 @@ def sessao() -> requests.Session:
 def baixar(url: str, s: requests.Session | None = None) -> bytes | None:
     """Baixa a URL. Devolve None se o arquivo nao existe (404).
 
-    Levanta excecao se o erro for persistente e nao for 404, para que
-    uma falha real apareca no log do Actions em vez de passar batido.
+    Imprime o que esta tentando ANTES de tentar, para que um travamento
+    apareca no log com o alvo identificado, nao como silencio.
+
+    Usa timeout (conexao, leitura) separados: 30s para ESTABELECER a
+    conexao, 300s para baixar o corpo. Assim um servidor inalcancavel
+    falha em 30s, nao fica pendurado. Erro de conexao (host inalcancavel)
+    desiste apos poucas tentativas; nao adianta insistir 4x num servidor
+    que nao responde.
     """
     s = s or sessao()
     ultimo_erro: Exception | None = None
+    curto = url if len(url) < 90 else "..." + url[-80:]
 
     for tentativa in range(1, TENTATIVAS + 1):
         try:
-            r = s.get(url, timeout=300, allow_redirects=True)
+            print(f"  GET {curto} (tentativa {tentativa}/{TENTATIVAS})")
+            r = s.get(url, timeout=(TIMEOUT_CONEXAO, TIMEOUT_LEITURA),
+                      allow_redirects=True)
             if r.status_code == 404:
-                print(f"  [404] nao publicado: {url}")
+                print(f"  [404] nao publicado")
                 return None
             r.raise_for_status()
             if not r.content:
                 raise RuntimeError("resposta vazia")
             return r.content
+        except requests.exceptions.ConnectionError as e:
+            # Host inalcancavel: falha de rede, nao adianta insistir muito.
+            print(f"  [conexao falhou] {str(e)[:120]}")
+            ultimo_erro = e
+            if tentativa < 2:  # so uma re-tentativa para erro de conexao
+                time.sleep(ESPERA_BASE)
+            else:
+                break
         except Exception as e:  # noqa: BLE001
+            print(f"  [erro] {str(e)[:120]}")
             ultimo_erro = e
             if tentativa < TENTATIVAS:
                 espera = ESPERA_BASE * (2 ** (tentativa - 1))
-                print(f"  [retry {tentativa}/{TENTATIVAS}] {e} -> aguardando {espera}s")
+                print(f"  aguardando {espera}s")
                 time.sleep(espera)
 
     raise RuntimeError(f"falha ao baixar {url}: {ultimo_erro}")
