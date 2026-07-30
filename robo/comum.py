@@ -231,8 +231,13 @@ def extrair(conteudo_zip: bytes, destino: Path) -> list[Path]:
     return escritos
 
 
+# Raiz da nova estrutura no Drive. Tudo pende de Sync/Fraport.
+DRIVE_RAIZ = "gdrive:Sync/Fraport"
+DRIVE_BASES = f"{DRIVE_RAIZ}/Bases"
+
+
 def _destino_drive(chave: str) -> tuple[str, str]:
-    """Decide a pasta do Drive a partir da ORIGEM (a chave do manifest),
+    """Decide a pasta RAW do Drive a partir da ORIGEM (a chave do manifest),
     nao do nome do arquivo.
 
     A chave diz de onde o arquivo veio: 'basica/202606', 'combinada/...',
@@ -241,18 +246,38 @@ def _destino_drive(chave: str) -> tuple[str, str]:
     (numero puro), e um mesmo numero poderia colidir entre fontes. A
     origem, o robo sempre conhece.
 
+    Nova estrutura: cada fonte tem Raw/ (bruto) e Processado/ (pronto).
+    Esta funcao devolve a pasta RAW. DOM e INT ficam juntos na mesma
+    pasta Raw (nomes disjuntos: '202601.CSV' vs 'INTERNACIONAL_2025-12.CSV').
+
     Devolve (pasta_no_drive, modo) onde modo e 'acumula' ou 'substitui'.
     """
     if chave.startswith("basica/") or chave.startswith("combinada/"):
-        return "gdrive:Fraport/Anac/Movimentacao/", "acumula"
-    if chave.startswith("tarifas/dom/"):
-        return "gdrive:Fraport/Anac/Ticket/DOM/", "acumula"
-    if chave.startswith("tarifas/int/"):
-        return "gdrive:Fraport/Anac/Ticket/INT/", "acumula"
+        return f"{DRIVE_RAIZ}/Anac/Movimentacao/Raw/", "acumula"
+    if chave.startswith("tarifas/dom/") or chave.startswith("tarifas/int/"):
+        return f"{DRIVE_RAIZ}/Anac/Ticket/Raw/", "acumula"
     if chave.startswith("siros/"):
-        return "gdrive:Fraport/Anac/Siros/", "substitui"
+        return f"{DRIVE_RAIZ}/Anac/Siros/Raw/", "substitui"
     # Origem desconhecida: falha explicita, para nao espalhar em pasta errada.
     raise ValueError(f"origem nao reconhecida para o Drive: {chave!r}")
+
+
+def _destino_processado(chave: str) -> tuple[str, str]:
+    """Pasta PROCESSADO do Drive para uma origem.
+
+    Espelha _destino_drive mas aponta para .../Processado/. Usada para
+    enviar o CSV ja processado (75 cols na Movimentacao, ticket agrupado,
+    siros com flip).
+
+    Devolve (pasta_no_drive, modo).
+    """
+    if chave.startswith("basica/") or chave.startswith("combinada/"):
+        return f"{DRIVE_RAIZ}/Anac/Movimentacao/Processado/", "acumula"
+    if chave.startswith("tarifas/dom/") or chave.startswith("tarifas/int/"):
+        return f"{DRIVE_RAIZ}/Anac/Ticket/Processado/", "acumula"
+    if chave.startswith("siros/"):
+        return f"{DRIVE_RAIZ}/Anac/Siros/Processado/", "substitui"
+    raise ValueError(f"origem nao reconhecida para processado: {chave!r}")
 
 
 def enviar_gdrive(caminho_local: Path, chave: str) -> bool:
@@ -302,6 +327,81 @@ def enviar_gdrive(caminho_local: Path, chave: str) -> bool:
     except Exception as e:  # noqa: BLE001
         print(f"  ERRO: {e}")
         return False
+
+
+def enviar_gdrive_processado(caminho_local: Path, chave: str) -> bool:
+    """Envia arquivo JA PROCESSADO para a pasta Processado/ da origem.
+
+    Igual a enviar_gdrive, mas usa _destino_processado (pasta Processado/
+    em vez de Raw/). A pasta e escolhida pela ORIGEM (chave do manifest),
+    nunca pelo nome do arquivo.
+
+    Devolve True se enviou, False se falhou.
+    """
+    if not caminho_local.exists():
+        print(f"  ERRO: {caminho_local} nao existe")
+        return False
+
+    try:
+        destino, modo = _destino_processado(chave)
+    except ValueError as e:
+        print(f"  ERRO: {e}")
+        return False
+
+    exe = rclone_bin()
+    try:
+        acao = "sync" if modo == "substitui" else "copy"
+        cmd = [exe, acao, str(caminho_local), destino, "--verbose"]
+        print(f"  enviando processado [{modo}]: {caminho_local.name} -> {destino}")
+        resultado = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+        if resultado.returncode == 0:
+            tam = caminho_local.stat().st_size / 1_048_576
+            print(f"  ok: {caminho_local.name} ({tam:.1f} MB) em {destino}")
+            return True
+        print(f"  ERRO ao enviar (codigo {resultado.returncode}):")
+        print(f"  {resultado.stderr.strip()}")
+        return False
+    except FileNotFoundError:
+        print(f"  ERRO: rclone nao encontrado em '{exe}'")
+        return False
+    except Exception as e:  # noqa: BLE001
+        print(f"  ERRO: {e}")
+        return False
+
+
+def baixar_bases_drive() -> Path | None:
+    """Baixa as bases auxiliares do Drive para _tmp/bases/ via rclone.
+
+    As dimensoes (Aircraft, Airports, Airlines) e o cache de cambio
+    (dolar.csv) vivem em Sync/Fraport/Bases/. O .bat garante que essa
+    pasta tem sempre a versao mais recente (corp = pessoal = Drive).
+
+    O robo do GitHub le essa pasta antes de processar, porque nao tem
+    acesso ao OneDrive corporativo.
+
+    Devolve o Path da pasta local com as bases, ou None se falhou.
+    Falha NAO derruba o run: quem chama decide se pula o processamento.
+    """
+    destino = tmp() / "bases"
+    destino.mkdir(parents=True, exist_ok=True)
+    exe = rclone_bin()
+    try:
+        cmd = [exe, "copy", f"{DRIVE_BASES}/", str(destino), "--verbose"]
+        print(f"  baixando bases: {DRIVE_BASES}/ -> {destino}")
+        resultado = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+        if resultado.returncode == 0:
+            arquivos = list(destino.glob("*"))
+            print(f"  ok: {len(arquivos)} base(s) baixada(s)")
+            return destino
+        print(f"  ERRO ao baixar bases (codigo {resultado.returncode}):")
+        print(f"  {resultado.stderr.strip()}")
+        return None
+    except FileNotFoundError:
+        print(f"  ERRO: rclone nao encontrado em '{exe}'")
+        return None
+    except Exception as e:  # noqa: BLE001
+        print(f"  ERRO ao baixar bases: {e}")
+        return None
 
 
 def carregar_manifest() -> dict:
