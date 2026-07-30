@@ -254,6 +254,11 @@ def anos_alvo(m: dict, marca: str, disponiveis: list[str]) -> list[str]:
     if not disponiveis:
         return []
     registrados = _meses_registrados(m, marca)
+    # So considera historico dentro do horizonte do robo. Registros antigos
+    # (< ANO_MINIMO), se existirem no manifest, nao ancoram a busca -- senao
+    # a ancora sairia do intervalo que 'disponiveis' ja restringiu.
+    registrados = {ref: q for ref, q in registrados.items()
+                   if int(ref[:4]) >= comum.ANO_MINIMO}
     if not registrados:
         return [max(disponiveis)]
 
@@ -283,10 +288,20 @@ def coletar(m: dict, completo: bool = False) -> list[tuple[str, str, Path]]:
                 page.goto(URL, wait_until="domcontentloaded")
                 _assentar(page)
 
+                # Piso central: o robo do GitHub so cuida do presente. Anos
+                # abaixo de ANO_MINIMO ficam para o .bat (historico local).
+                # Isto vale mesmo em --completo -- e o que impede a varredura
+                # de rebaixar 25 anos de tarifa e estourar o Playwright.
+                disponiveis = [a for a in disponiveis if int(a) >= comum.ANO_MINIMO]
+                if not disponiveis:
+                    print(f"\n[TARIFAS {marca.upper()}] nada >= {comum.ANO_MINIMO} "
+                          f"no site (INT normalmente so aparece meses depois) -> pula")
+                    continue
+
                 if completo:
                     alvos = disponiveis
-                    print(f"\n[TARIFAS {marca.upper()}] varredura completa: "
-                          f"{len(alvos)} ano(s)")
+                    print(f"\n[TARIFAS {marca.upper()}] varredura completa "
+                          f"(>= {comum.ANO_MINIMO}): {len(alvos)} ano(s)")
                 else:
                     alvos = anos_alvo(m, marca, disponiveis)
                     registrados = _meses_registrados(m, marca)

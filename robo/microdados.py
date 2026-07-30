@@ -225,6 +225,20 @@ def coletar(m: dict, forcar_varredura: bool = False,
         disponiveis = inventario.get(segmento, {})
         if not disponiveis:
             continue
+        # Piso central: no fluxo automatico o robo so cuida de >= ANO_MINIMO.
+        # O historico fica para o --backfill (rodado de proposito) ou para o
+        # .bat local. Assim uma primeira execucao nao tenta 318 meses.
+        if not backfill:
+            antes = len(disponiveis)
+            disponiveis = {ref: url for ref, url in disponiveis.items()
+                           if int(ref[:4]) >= comum.ANO_MINIMO}
+            corte = antes - len(disponiveis)
+            if corte:
+                print(f"  (piso {comum.ANO_MINIMO}: {corte} mes(es) antigo(s) "
+                      f"ignorado(s) no automatico; use --backfill para o historico)")
+            if not disponiveis:
+                print(f"  nada >= {comum.ANO_MINIMO} no inventario")
+                continue
         publicar += _avancar(m, segmento, disponiveis, s, backfill)
         if varrer:
             publicar += _varrer(m, segmento, disponiveis, s)

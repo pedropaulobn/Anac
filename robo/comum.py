@@ -31,6 +31,14 @@ TIMEOUT_CONEXAO = 30  # segundos para estabelecer conexao (nao o download todo)
 TIMEOUT_LEITURA = 300  # segundos para baixar o corpo, uma vez conectado
 LIMITE_ASSET_MB = 2048  # teto do GitHub por asset de release
 
+# Piso de ano para coleta automatica. O robo do GitHub so cuida do
+# presente; o historico (2000..2025) ja esta congelado no OneDrive
+# corporativo e e reprocessado localmente pelo .bat. Isso evita que uma
+# varredura completa (ou um manifest vazio) faca o robo tentar rebaixar
+# 25 anos de tarifa via Playwright -- causa do exit 1 no log de julho.
+# Para mudar o horizonte do robo, muda-se so aqui.
+ANO_MINIMO = 2026
+
 # Onde procurar o rclone. No PC do Pedro esta em C:\Backup\Rclone;
 # no GitHub Actions (Linux) esta no PATH como "rclone".
 RCLONE_WINDOWS = r"C:\Backup\Rclone\rclone.exe"
