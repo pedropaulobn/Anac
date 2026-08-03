@@ -31,7 +31,11 @@ from . import comum, processa_mes, processa_ticket, agrupa_ticket, mescla_final
 def _meses_raw_movimentacao(mov_raw: Path, ano_min: int) -> set[tuple[int, int]]:
     """Descobre (ano, mes) que tem PAR basica+combinada na pasta Raw."""
     bas, comb = {}, {}
-    for arq in mov_raw.glob("*.txt"):
+    if not mov_raw.exists():
+        return set()
+    for arq in mov_raw.iterdir():
+        if not arq.is_file() or not arq.suffix.lower() == ".txt":
+            continue
         m = re.match(r"(basica|combinada)(\d{4})-?(\d{2})", arq.name.lower())
         if not m:
             continue
@@ -46,7 +50,11 @@ def _meses_raw_movimentacao(mov_raw: Path, ano_min: int) -> set[tuple[int, int]]
 def _meses_raw_ticket(tkt_raw: Path, ano_min: int) -> dict[tuple[int, int], dict]:
     """Descobre tarifas DOM/INT na pasta Raw, por (ano, mes)."""
     achados: dict[tuple[int, int], dict] = {}
-    for arq in tkt_raw.glob("*.CSV"):
+    if not tkt_raw.exists():
+        return achados
+    for arq in tkt_raw.iterdir():
+        if not arq.is_file() or arq.suffix.lower() != ".csv":
+            continue
         nome = arq.name.upper()
         if nome.startswith("INTERNACIONAL"):
             m = re.search(r"(\d{4})-(\d{2})", nome)
@@ -88,6 +96,22 @@ def processar_tudo(corp_anac: str, bases: str, ano_alvo: int | None = None,
     # Se um ano especifico foi pedido, restringe a ele; senao, >= ANO_MINIMO.
     def _no_alvo(ano):
         return ano == ano_alvo if ano_alvo else ano >= comum.ANO_MINIMO
+
+    # Diagnostico: mostrar exatamente onde esta olhando e o que achou.
+    print(f"  Raw Movimentacao: {mov_raw}")
+    print(f"    existe? {mov_raw.exists()}", end="")
+    if mov_raw.exists():
+        txts = list(mov_raw.glob("*.txt")) + list(mov_raw.glob("*.TXT"))
+        print(f" | {len(txts)} arquivo(s) .txt")
+    else:
+        print()
+    print(f"  Raw Ticket: {tkt_raw}")
+    print(f"    existe? {tkt_raw.exists()}", end="")
+    if tkt_raw.exists():
+        csvs = list(tkt_raw.glob("*.csv")) + list(tkt_raw.glob("*.CSV"))
+        print(f" | {len(csvs)} arquivo(s) .csv")
+    else:
+        print()
 
     pares_mov = {(a, m) for (a, m) in _meses_raw_movimentacao(mov_raw, comum.ANO_MINIMO)
                  if _no_alvo(a)}

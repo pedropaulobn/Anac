@@ -25,7 +25,7 @@ from . import comum, datasas, estado, microdados, siros
 
 # Modulos de processamento (opcionais no fluxo: se faltar base, o raw
 # ainda sobe e o processamento e apenas pulado).
-from . import processa_mes, processa_ticket, processa_siros, dolar
+from . import processa_mes, processa_ticket, processa_siros, dolar, gerar_links
 
 
 def _extrair_e_enviar(caminho_zip: Path, chave: str,
@@ -283,6 +283,16 @@ def main() -> int:
                                         args.sem_drive))
         falhas.extend(_processar_siros(extraidos_todos, pasta_bases,
                                        args.sem_drive))
+
+    # Se algo foi enviado ao Drive, regenera o links.csv (inventario de
+    # links de download que o PC corporativo usa para baixar sem logar no
+    # Google). So no modo real (com Drive) e se houve envio.
+    if pendentes and not args.sem_drive:
+        print("\n== atualizando links.csv ==")
+        try:
+            gerar_links.gerar(enviar=True)
+        except Exception as e:  # noqa: BLE001
+            print(f"  [aviso] falha ao gerar links.csv: {e}", file=sys.stderr)
 
     comum.salvar_manifest(manifest)
     estado.escrever(manifest)

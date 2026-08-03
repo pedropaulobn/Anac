@@ -4,12 +4,35 @@ title Processador ANAC
 
 REM ============================================================
 REM  CAMINHOS -- ajuste aqui se algo mudar de lugar
-REM  (arquivo salvo em ANSI/cp1252; NAO use chcp 65001 aqui,
-REM   senao o acento em "Operacoes" quebra o parse do caminho)
+REM
+REM  IMPORTANTE: a pasta real tem acento ("BI Operacoes - BI").
+REM  Para nao depender de code page do console, resolvemos a
+REM  pasta por CURINGA (BI Opera*es - BI) via 'for /d'. Assim o
+REM  .bat nunca precisa conter o caractere acentuado.
 REM ============================================================
 
 set "REPO=C:\Backup\GitHub\Anac"
-set "CORP=C:\Backup\FRAPORT BRASIL S.A AEROPORTO DE PORTO ALEGRE\BI Operações - BI"
+set "BASE_FRAPORT=C:\Backup\FRAPORT BRASIL S.A AEROPORTO DE PORTO ALEGRE"
+
+REM Resolve a pasta "BI Opera<c>oes - BI" sem digitar o acento.
+REM Se houver mais de uma casando (ex: uma pasta fantasma criada por
+REM engano), fica com a que realmente tem a subpasta "Anac".
+set "CORP="
+for /d %%D in ("%BASE_FRAPORT%\BI Opera*es - BI") do (
+  if exist "%%~fD\Anac" set "CORP=%%~fD"
+)
+REM Se nenhuma tinha Anac, aceita a primeira que casar (fallback).
+if not defined CORP (
+  for /d %%D in ("%BASE_FRAPORT%\BI Opera*es - BI") do set "CORP=%%~fD"
+)
+if not defined CORP (
+  echo [ERRO] Nao encontrei a pasta "BI Opera*es - BI" em:
+  echo        %BASE_FRAPORT%
+  echo Ajuste BASE_FRAPORT no topo do menu.bat.
+  pause
+  exit /b 1
+)
+
 set "CORP_ANAC=%CORP%\Anac"
 set "BASES=%CORP%\Bases"
 
@@ -32,6 +55,8 @@ cd /d "%REPO%"
 cls
 echo ============================================================
 echo    PROCESSADOR ANAC
+echo ============================================================
+echo   Pasta corp: %CORP%
 echo ============================================================
 echo.
 echo   PRINCIPAL
