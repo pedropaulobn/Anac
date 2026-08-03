@@ -284,10 +284,12 @@ def main() -> int:
         falhas.extend(_processar_siros(extraidos_todos, pasta_bases,
                                        args.sem_drive))
 
-    # Se algo foi enviado ao Drive, regenera o links.csv (inventario de
-    # links de download que o PC corporativo usa para baixar sem logar no
-    # Google). So no modo real (com Drive) e se houve envio.
-    if pendentes and not args.sem_drive:
+    # Regenera o links.csv (inventario de links de download que o PC
+    # corporativo usa para baixar sem logar no Google). Roda SEMPRE no
+    # modo real -- a lista deve refletir todo o conteudo atual do Drive,
+    # mesmo em dias sem coleta nova (ex: para o sync do PC nunca ficar
+    # sem lista). So pula no modo --sem-drive (teste local).
+    if not args.sem_drive:
         print("\n== atualizando links.csv ==")
         try:
             gerar_links.gerar(enviar=True)
