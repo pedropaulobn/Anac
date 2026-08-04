@@ -123,7 +123,10 @@ def _guardar(m: dict, segmento: str, ref: str, url: str, s, motivo: str):
 
 
 def _avancar(m, segmento, disponiveis: dict[str, str], s, backfill: bool):
-    conhecidas = set(refs_coletadas(m, segmento))
+    # So conta como "conhecida" o que esta dentro do inventario visivel
+    # (ja filtrado pelo piso). Assim jul-dez/2025, que existem no manifest
+    # de execucoes antigas mas estao abaixo do piso, nao poluem a contagem.
+    conhecidas = set(refs_coletadas(m, segmento)) & set(disponiveis)
     faltando = sorted(set(disponiveis) - conhecidas)
 
     if not faltando:
@@ -152,7 +155,10 @@ def _avancar(m, segmento, disponiveis: dict[str, str], s, backfill: bool):
 
 
 def _varrer(m, segmento, disponiveis: dict[str, str], s):
-    conhecidas = refs_coletadas(m, segmento)
+    # So varre o que esta dentro do inventario visivel (piso aplicado).
+    # Meses abaixo do piso ficam no manifest mas nao sao reconferidos aqui
+    # -- o historico e responsabilidade do .bat, nao do robo.
+    conhecidas = [r for r in refs_coletadas(m, segmento) if r in disponiveis]
     if not conhecidas:
         return []
 
