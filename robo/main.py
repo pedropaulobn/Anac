@@ -232,6 +232,7 @@ def main() -> int:
     manifest = comum.carregar_manifest()
     pendentes: list[tuple[str, str, Path]] = []
     falhas: list[str] = []
+    avisos_rede: list[str] = []
 
     # Dia 28: varredura completa das tarifas, que nao tem porteiro proprio.
     # Os microdados tem porteiro (data da pagina) e dispensam calendario.
@@ -251,8 +252,25 @@ def main() -> int:
         try:
             pendentes.extend(funcao())
         except Exception as e:  # noqa: BLE001
-            print(f"[ERRO] fonte '{nome}': {e}", file=sys.stderr)
-            falhas.append(nome)
+            # Falha de REDE (gov.br/anac fora do ar, timeout, DNS) e
+            # transitoria e nao e problema do nosso codigo -- a fonte
+            # publica so uma vez por mes e a retentativa diaria cobre.
+            # Vira aviso, nao derruba o run. Qualquer outra falha (bug,
+            # parsing) continua sendo falha real (exit 1).
+            msg = str(e)
+            rede = any(t in msg for t in (
+                "Network is unreachable", "Max retries exceeded",
+                "Connection", "ConnectionError", "Timeout", "timed out",
+                "Failed to establish", "NameResolution", "Temporary failure",
+            ))
+            if rede:
+                print(f"[AVISO REDE] fonte '{nome}' inacessivel agora "
+                      f"(transitorio, sera tentada no proximo run): "
+                      f"{msg[:120]}", file=sys.stderr)
+                avisos_rede.append(nome)
+            else:
+                print(f"[ERRO] fonte '{nome}': {e}", file=sys.stderr)
+                falhas.append(nome)
 
     # Extrai e envia cada zip coletado ao Drive (RAW), acumulando os
     # arquivos extraidos para a etapa de processamento.
@@ -298,6 +316,10 @@ def main() -> int:
 
     comum.salvar_manifest(manifest)
     estado.escrever(manifest)
+
+    if avisos_rede:
+        print(f"\n[REDE] fonte(s) inacessivel(is) agora (transitorio, "
+              f"nao conta como falha): {', '.join(avisos_rede)}")
 
     if falhas:
         print(f"\nConcluido com falhas: {', '.join(falhas)}", file=sys.stderr)
