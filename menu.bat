@@ -11,17 +11,24 @@ REM  pasta por CURINGA (BI Opera*es - BI) via 'for /d'. Assim o
 REM  .bat nunca precisa conter o caractere acentuado.
 REM ============================================================
 
-set "REPO=C:\Backup\GitHub\Anac"
+set "REPO=C:\Backup\OneDrive\Sync\GitHub\Anac"
 set "BASE_FRAPORT=C:\Backup\FRAPORT BRASIL S.A AEROPORTO DE PORTO ALEGRE"
 
 REM Resolve a pasta "BI Opera<c>oes - BI" sem digitar o acento.
-REM Se houver mais de uma casando (ex: uma pasta fantasma criada por
-REM engano), fica com a que realmente tem a subpasta "Anac".
+REM Uma pasta fantasma (nome corrompido) pode casar o curinga e ate ter
+REM um "Anac" vazio dentro. Por isso escolhemos a que tem de fato a
+REM subpasta "Anac\Movimentacao\Raw" -- a estrutura real dos brutos.
 set "CORP="
 for /d %%D in ("%BASE_FRAPORT%\BI Opera*es - BI") do (
-  if exist "%%~fD\Anac" set "CORP=%%~fD"
+  if exist "%%~fD\Anac\Movimentacao\Raw\" set "CORP=%%~fD"
 )
-REM Se nenhuma tinha Anac, aceita a primeira que casar (fallback).
+REM Fallback 1: alguma que tenha ao menos "Anac".
+if not defined CORP (
+  for /d %%D in ("%BASE_FRAPORT%\BI Opera*es - BI") do (
+    if exist "%%~fD\Anac\" set "CORP=%%~fD"
+  )
+)
+REM Fallback 2: a primeira que casar.
 if not defined CORP (
   for /d %%D in ("%BASE_FRAPORT%\BI Opera*es - BI") do set "CORP=%%~fD"
 )

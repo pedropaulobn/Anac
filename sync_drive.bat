@@ -19,6 +19,10 @@ REM https://drive.usercontent.google.com/download?id=SEU_ID&export=download&conf
 REM >>> AJUSTE: cole so o ID do links.csv aqui <<<
 set "LINKS_ID=152zUEMQwbwkAMrkTE7EmxZvEnAFRrS_6"
 
+REM Baixar tambem os Raw? Por padrao NAO (o corp ja tem os brutos; os
+REM Raw sao grandes e redundantes). Mude para 1 se quiser tudo.
+set "INCLUIR_RAW=0"
+
 REM Base corporativa (pasta com acento resolvida por curinga).
 set "BASE_FRAPORT=C:\Backup\FRAPORT BRASIL S.A AEROPORTO DE PORTO ALEGRE"
 set "CORP="
@@ -63,28 +67,39 @@ REM 2. Para cada linha (pula cabecalho): baixa via ID (token 3).
 set "TOTAL=0"
 set "OK=0"
 set "FALHA=0"
+set "PULADO=0"
 for /f "usebackq skip=1 tokens=1,3 delims=;" %%A in ("%LISTA%") do (
   set /a TOTAL+=1
   set "CAMINHO=%%A"
   set "GID=%%B"
   set "REL=!CAMINHO:/=\!"
-  set "ALVO=%DESTINO%\!REL!"
-  for %%F in ("!ALVO!") do set "PASTA=%%~dpF"
-  if not exist "!PASTA!" mkdir "!PASTA!" 2>nul
-  echo   baixando: !REL!
-  curl.exe -L -s -o "!ALVO!" "https://drive.usercontent.google.com/download?id=!GID!&export=download&confirm=t"
-  if exist "!ALVO!" (
-    set /a OK+=1
-    echo   OK    !REL!>> "%LOG%"
+  REM Decide se baixa: se INCLUIR_RAW=0 e o caminho tem \Raw\, pula.
+  set "BAIXAR=1"
+  if "!INCLUIR_RAW!"=="0" (
+    echo !REL! | find "\Raw\" >nul && set "BAIXAR=0"
+  )
+  if "!BAIXAR!"=="0" (
+    set /a PULADO+=1
+    echo   pula ^(Raw^): !REL!>> "%LOG%"
   ) else (
-    set /a FALHA+=1
-    echo   FALHA !REL!>> "%LOG%"
+    set "ALVO=%DESTINO%\!REL!"
+    for %%F in ("!ALVO!") do set "PASTA=%%~dpF"
+    if not exist "!PASTA!" mkdir "!PASTA!" 2>nul
+    echo   baixando: !REL!
+    curl.exe -L -s -o "!ALVO!" "https://drive.usercontent.google.com/download?id=!GID!&export=download&confirm=t"
+    if exist "!ALVO!" (
+      set /a OK+=1
+      echo   OK    !REL!>> "%LOG%"
+    ) else (
+      set /a FALHA+=1
+      echo   FALHA !REL!>> "%LOG%"
+    )
   )
 )
 
 echo.
-echo Concluido: !OK! de !TOTAL! baixado^(s^), !FALHA! falha^(s^)
-echo Concluido: !OK! de !TOTAL! baixado, !FALHA! falha>> "%LOG%"
+echo Concluido: !OK! baixado^(s^), !PULADO! pulado^(s^), !FALHA! falha^(s^) de !TOTAL!
+echo Concluido: !OK! baixado, !PULADO! pulado, !FALHA! falha de !TOTAL!>> "%LOG%"
 echo Log: %LOG%
 echo.
 echo Pressione uma tecla para fechar.
