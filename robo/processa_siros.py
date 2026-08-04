@@ -267,7 +267,12 @@ def processar(caminho_voos, pasta_saida, pasta_bases, data_exec=None):
     final = pd.concat([dep, arr], ignore_index=True)
 
     os.makedirs(pasta_saida, exist_ok=True)
-    nome = f"siros_{data_exec}.csv"
+    # Nome FIXO (nao por data): o Siros e substitutivo. Nome variavel por
+    # data fazia o rclone (modo 'substitui') acumular um arquivo de ~600 MB
+    # por dia no Drive, em vez de sobrescrever. Com nome fixo, cada dia
+    # troca o anterior. Se precisar datar, use a data de modificacao do
+    # arquivo, nao o nome.
+    nome = "siros.csv"
     saida = os.path.join(pasta_saida, nome)
     final.to_csv(saida, index=False, sep=";", encoding="utf-8-sig")
     print(f"    gravado: {nome}  ({len(dep):,} DEP + {len(arr):,} ARR = "
