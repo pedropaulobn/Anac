@@ -60,7 +60,10 @@ def _meses_raw_ticket(tkt_raw: Path, ano_min: int) -> dict[tuple[int, int], dict
             m = re.search(r"(\d{4})-(\d{2})", nome)
             tipo = "int"
         else:
-            m = re.match(r"(\d{4})(\d{2})\.CSV", nome)
+            # DOM: 6 digitos no INICIO. Nao exige '.CSV' logo apos, para
+            # tolerar sufixos que a ANAC as vezes adiciona, tipo
+            # '202605 (1).CSV' ou '202605(1).CSV'.
+            m = re.match(r"(\d{4})(\d{2})", nome)
             tipo = "dom"
         if not m:
             continue

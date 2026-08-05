@@ -140,11 +140,9 @@ def _processar_ticket(extraidos: list[Path], pasta_bases: Path | None,
     base do dolar faltar, o INT e pulado com aviso -- o raw ja subiu.
     """
     falhas: list[str] = []
-    # Filtra so os arquivos de tarifa (vieram da origem tarifas/*)
-    tarifas = [p for p in extraidos
-               if p.suffix.upper() == ".CSV"
-               and (p.name.upper().startswith(("INTERNACIONAL",))
-                    or re.fullmatch(r"\d{6}\.CSV", p.name.upper()))]
+    # Filtra so os arquivos de tarifa (DOM/INT), tolerante a sufixos que
+    # a ANAC as vezes adiciona (ex: '202605 (1).CSV').
+    tarifas = [p for p in extraidos if processa_ticket.eh_tarifa(p.name)]
     if not tarifas:
         return falhas
 
@@ -152,13 +150,13 @@ def _processar_ticket(extraidos: list[Path], pasta_bases: Path | None,
     saida.mkdir(parents=True, exist_ok=True)
 
     # Garante cache de dolar atualizado se houver INT
-    tem_int = any(p.name.upper().startswith("INTERNACIONAL") for p in tarifas)
+    tem_int = any(processa_ticket.classificar_tarifa(p.name) == "int" for p in tarifas)
     if tem_int and pasta_bases:
         dolar.atualizar(pasta_bases)  # tenta IPEA; segue com cache se falhar
 
     print(f"\n== processando Ticket: {len(tarifas)} arquivo(s) ==")
     for p in sorted(tarifas):
-        tipo = "int" if p.name.upper().startswith("INTERNACIONAL") else "dom"
+        tipo = processa_ticket.classificar_tarifa(p.name)
         ano, mes = processa_ticket._periodo_do_nome(p.name)
         periodo = f"{ano}-{mes:02d}" if ano else p.name
         try:

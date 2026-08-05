@@ -57,6 +57,33 @@ def _periodo_do_nome(nome: str) -> tuple[int, int] | tuple[None, None]:
     return None, None
 
 
+def eh_tarifa(nome: str) -> bool:
+    """Diz se o arquivo e uma tarifa (DOM ou INT), tolerante a sufixos.
+
+    A ANAC as vezes entrega o arquivo com um sufixo de duplicata, tipo
+    '202605 (1).CSV', '202605(1).CSV' ou '202605 (01).CSV'. Em vez de
+    exigir o nome exato (fullmatch), reconhecemos pela ESTRUTURA:
+      - INT: comeca com INTERNACIONAL
+      - DOM: comeca com 6 digitos (AAAAMM), com qualquer coisa depois
+    Assim qualquer variacao de sufixo e coberta agora e no futuro.
+    """
+    base = os.path.basename(nome).upper()
+    if not base.endswith(".CSV"):
+        return False
+    if base.startswith("INTERNACIONAL"):
+        return True
+    # DOM: 6 digitos no inicio (ignora o que vier depois: espaco, (1) etc.)
+    return re.match(r"\d{6}", base) is not None
+
+
+def classificar_tarifa(nome: str) -> str | None:
+    """Devolve 'int', 'dom' ou None (se nao for tarifa)."""
+    if not eh_tarifa(nome):
+        return None
+    base = os.path.basename(nome).upper()
+    return "int" if base.startswith("INTERNACIONAL") else "dom"
+
+
 def _tarifa_int(serie: pd.Series, decimal: str) -> pd.Series:
     """Converte a coluna de tarifa (texto) para inteiro, como o Int64 do M.
 
