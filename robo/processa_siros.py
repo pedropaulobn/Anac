@@ -54,32 +54,25 @@ OFFSET_UF = {
 OFFSET_PADRAO = -3  # se nada mais servir
 
 # Colunas finais (as mesmas 75 da Movimentacao DEP; null onde nao existe)
+# Colunas de saida do Siros: SO as que o voo futuro de fato preenche.
+# As colunas de execucao (carga, bagagem, combustivel, CD/CI Dest etc.)
+# nao existem para voo futuro e sao omitidas -- o BI as cria vazias no
+# empilhamento, usando a Movimentacao como molde. Acft Group/Mtow/Fra
+# ficam (preenchem parcialmente, conforme a aeronave casa na base).
 COLUNAS_MOV = [
     "Airline Icao", "Airline", "Voo", "Fln Icao", "Fln",
-    "Id Voo", "Id Linha", "Natureza", "Tipo", "Base", "Etapa", "Escala",
+    "Id Voo", "Id Linha", "Natureza", "Tipo", "Base", "Etapa",
     "Hora", "Data", "OD Hora", "OD Data",
-    "Aero Icao", "Aero", "Aeroporto", "Cidade", "UF", "Região", "País", "Continente",
-    "OD Icao", "OD", "OD Aeroporto", "OD Cidade", "OD UF", "OD Região", "OD País", "OD Continente",
-    "Aircraft", "Acft Modelo", "Matrícula", "Acft Group", "Mtow", "Acft Fra Group",
-    "Combustível (L)", "Seats", "Payload Capacidade (Kg)", "Distância (Km)",
-    "PAX Pagos", "PAX Grátis", "Bagagem Livre (Kg)", "Bagagem Excesso (Kg)",
-    "Carga Paga (Kg)", "Carga Grátis (Kg)", "Correios (Kg)",
-    "Decolagens", "Horas Voadas", "Peso Útil (Kg)", "Vméd (Km/h)", "Ask", "Rpk",
-    "Pax Total", "LF", "Cargo Total", "Group", "Chave", "KeyTkt",
-    "CD Dest: PAX Pagos", "CD Dest: PAX Grátis", "CD Dest: Bags Livre (kg)",
-    "CD Dest: Bags Excesso (kg)", "CD Dest: Carga Paga (kg)",
-    "CD Dest: Carga Grátis (kg)", "CD Dest: Correios (kg)",
-    "CI Dest: PAX Pagos", "CI Dest: PAX Grátis", "CI Dest: Bags Livre (kg)",
-    "CI Dest: Bags Excesso (kg)", "CI Dest: Carga Paga (kg)",
-    "CI Dest: Carga Grátis (kg)", "CI Dest: Correios (kg)",
+    "Aero Icao", "Aero", "State/Country", "Region",
+    "OD Icao", "OD", "OD State/Country", "OD Region",
+    "Aircraft", "Acft Group", "Mtow", "Acft Fra Group",
+    "Seats", "Decolagens", "Pax Total", "Group",
 ]
 
 # Colunas que trocam origem<->destino no flip ARR (geo)
 _SWAP_GEO = [
     ("Aero Icao", "OD Icao"), ("Aero", "OD"),
-    ("Aeroporto", "OD Aeroporto"), ("Cidade", "OD Cidade"),
-    ("UF", "OD UF"), ("Região", "OD Região"),
-    ("País", "OD País"), ("Continente", "OD Continente"),
+    ("State/Country", "OD State/Country"), ("Region", "OD Region"),
 ]
 
 
@@ -109,8 +102,9 @@ def carregar_airports(pasta_bases):
     df.columns = df.columns.str.strip()
     df = df.drop(columns=[c for c in ("ICAO", "IATA") if c in df.columns])
     df = df.rename(columns={"OD ICAO": "ICAO", "OD IATA": "IATA"})
-    manter = ["ICAO", "IATA", "Airport", "City", "UF", "Region",
-              "Country", "Continent", "UTC Offset"]
+    # Geo enxuto: so State/Country (coluna W) e Region (coluna Z). UTC
+    # Offset segue para a conversao de hora (usado, nao exportado).
+    manter = ["ICAO", "IATA", "State/Country", "Region", "UTC Offset"]
     df = df[[c for c in manter if c in df.columns]].drop_duplicates("ICAO")
     df["_offset"] = df["UTC Offset"].apply(_norm_offset) if "UTC Offset" in df else OFFSET_PADRAO
     return df
@@ -215,24 +209,19 @@ def processar(caminho_voos, pasta_saida, pasta_bases, data_exec=None):
     out["Fln Icao"] = out["Airline Icao"].fillna("") + out["Voo"].fillna("")
     out["Fln"] = out["Airline"].fillna("") + out["Voo"].fillna("")
 
-    # Airports origem: seleciona e renomeia a partir de colunas cruas,
-    # evitando colisao de nomes no merge.
-    ap_sel = ap.rename(columns={"Region": "Região", "Country": "País",
-                                "Continent": "Continente"})
-    cols_ap = ["ICAO", "IATA", "Airport", "City", "UF", "Região", "País", "Continente"]
-    cols_ap = [c for c in cols_ap if c in ap_sel.columns]
-    ap_sel = ap_sel[cols_ap]
+    # Airports: so State/Country e Region, por ICAO (a IATA ja vem do
+    # merge; aqui buscamos so o geo enxuto). Origem e destino usam a
+    # mesma coluna da base, rotulada conforme a ponta.
+    ap_geo = ap[["ICAO", "IATA", "State/Country", "Region"]].copy()
 
-    ap_o = ap_sel.rename(columns={
-        "ICAO": "Aero Icao", "IATA": "Aero", "Airport": "Aeroporto",
-        "City": "Cidade"})  # UF, Região, País, Continente ficam iguais
+    ap_o = ap_geo.rename(columns={
+        "ICAO": "Aero Icao", "IATA": "Aero",
+        "State/Country": "State/Country", "Region": "Region"})
     out = out.merge(ap_o, on="Aero Icao", how="left")
 
-    # Airports destino
-    ap_d = ap_sel.rename(columns={
-        "ICAO": "OD Icao", "IATA": "OD", "Airport": "OD Aeroporto",
-        "City": "OD Cidade", "UF": "OD UF", "Região": "OD Região",
-        "País": "OD País", "Continente": "OD Continente"})
+    ap_d = ap_geo.rename(columns={
+        "ICAO": "OD Icao", "IATA": "OD",
+        "State/Country": "OD State/Country", "Region": "OD Region"})
     out = out.merge(ap_d, on="OD Icao", how="left")
 
     # Aircrafts

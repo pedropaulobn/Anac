@@ -313,12 +313,14 @@ def enviar_gdrive(caminho_local: Path, chave: str) -> bool:
     exe = rclone_bin()
 
     try:
-        # sync (SIROS) deleta o que nao existe local; copy (resto) so envia.
-        acao = "sync" if modo == "substitui" else "copy"
-        cmd = [exe, acao, str(caminho_local), destino, "--verbose"]
+        # copy sempre: os arquivos tem nome estavel (voos.csv, basicaYYYY-MM
+        # etc.), entao copy sobrescreve o mesmo nome -- efeito de substituir
+        # sem o overhead de hash/delecao do sync. Timeout 30min para uploads
+        # grandes (voos.csv raw ~150 MB).
+        cmd = [exe, "copy", str(caminho_local), destino, "--verbose"]
 
         print(f"  enviando [{modo}]: {caminho_local.name} -> {destino}")
-        resultado = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+        resultado = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
 
         if resultado.returncode == 0:
             tam = caminho_local.stat().st_size / 1_048_576
@@ -358,10 +360,14 @@ def enviar_gdrive_processado(caminho_local: Path, chave: str) -> bool:
 
     exe = rclone_bin()
     try:
-        acao = "sync" if modo == "substitui" else "copy"
-        cmd = [exe, acao, str(caminho_local), destino, "--verbose"]
+        # copy (nao sync) mesmo no modo 'substitui': com nome de arquivo
+        # FIXO (ex: siros.csv), copy sobrescreve o mesmo arquivo -- efeito
+        # de substituir, sem o overhead de hash/delecao do sync, que fazia
+        # o Siros (400+ MB) estourar o timeout. Timeout ampliado para 30min
+        # para acomodar uploads grandes e o crescimento futuro.
+        cmd = [exe, "copy", str(caminho_local), destino, "--verbose"]
         print(f"  enviando processado [{modo}]: {caminho_local.name} -> {destino}")
-        resultado = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+        resultado = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
         if resultado.returncode == 0:
             tam = caminho_local.stat().st_size / 1_048_576
             print(f"  ok: {caminho_local.name} ({tam:.1f} MB) em {destino}")
