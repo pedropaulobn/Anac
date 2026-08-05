@@ -51,6 +51,8 @@ COLUNAS_FINAL = [
     "CI Orig: PAX Pagos", "CI Orig: PAX Grátis", "CI Orig: Bags Livre (kg)",
     "CI Orig: Bags Excesso (kg)", "CI Orig: Carga Paga (kg)",
     "CI Orig: Carga Grátis (kg)", "CI Orig: Correios (kg)",
+    # Geo do Airports (por ICAO), no fim. Flip troca origem<->destino.
+    "State/Country", "Region", "OD State/Country", "OD Region",
 ]
 
 TKT_COLS = ["Tkt Avg", "Tkt Min", "Tkt Max", "TktEco Avg", "TktBsn Avg", "TktFst Avg"]
@@ -62,6 +64,7 @@ _SWAP = [
     ("Aeroporto", "OD Aeroporto"), ("Cidade", "OD Cidade"),
     ("UF", "OD UF"), ("Região", "OD Região"),
     ("País", "OD País"), ("Continente", "OD Continente"),
+    ("State/Country", "OD State/Country"), ("Region", "OD Region"),
 ]
 
 # CD/CI Dest -> Orig (14 colunas)

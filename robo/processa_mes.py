@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 processa_mes.py — Processador mensal ANAC
-Mescla Básica + Combinada + Aircrafts e gera o CSV processado (75 colunas, visão DEP).
+Mescla Básica + Combinada + Aircrafts + Airports e gera o CSV processado (79 colunas, visão DEP).
 
 Uso:
   python processa_mes.py 2026-01
-  python processa_mes.py 2020-01 --saida C:\Temp
+  python processa_mes.py 2020-01 --saida C:/Temp
 
 Replica fielmente a lógica do Power Query (fnBasicaMes + fnCombMes + Aircrafts).
 """
@@ -168,6 +168,8 @@ COLUNAS_SAIDA = [
     "CI Dest: Bags Livre (kg)", "CI Dest: Bags Excesso (kg)",
     "CI Dest: Carga Paga (kg)", "CI Dest: Carga Grátis (kg)",
     "CI Dest: Correios (kg)",
+    # Geo do Airports (por ICAO), no fim para preservar a ordem validada.
+    "State/Country", "Region", "OD State/Country", "OD Region",
 ]
 
 
@@ -269,6 +271,32 @@ def processar_combinada(caminho_comb):
     return agrupado
 
 
+def carregar_airports_geo(pasta_bases):
+    """Le Airports.xlsx e devolve so ICAO -> State/Country, Region.
+
+    Usa OD ICAO como chave (versao limpa, sem brancos), igual ao Siros.
+    Traz apenas State/Country (coluna W) e Region (coluna Z) -- a IATA
+    ja vem nativa na Movimentacao (Aero/OD), entao NAO e trazida aqui,
+    para nao colidir. Dedup por ICAO.
+
+    pasta_bases: pasta que contem Airports.xlsx. Se None ou o arquivo
+    nao existir, devolve None (o merge e pulado, colunas ficam vazias).
+    """
+    if not pasta_bases:
+        return None
+    caminho = os.path.join(str(pasta_bases), "Airports.xlsx")
+    if not os.path.isfile(caminho):
+        return None
+    import pandas as pd
+    df = pd.read_excel(caminho, dtype=str)
+    df.columns = df.columns.str.strip()
+    df = df.drop(columns=[c for c in ("ICAO", "IATA") if c in df.columns])
+    df = df.rename(columns={"OD ICAO": "ICAO"})
+    manter = ["ICAO", "State/Country", "Region"]
+    df = df[[c for c in manter if c in df.columns]].drop_duplicates("ICAO")
+    return df
+
+
 def carregar_aircrafts(caminho):
     """
     Lê a dimensão Aircrafts do Excel cru e aplica o mesmo rename
@@ -308,7 +336,7 @@ def text_proper(valor):
     return valor.title()
 
 
-def processar_basica(caminho_bas, df_comb, df_acft):
+def processar_basica(caminho_bas, df_comb, df_acft, df_airports=None):
     """
     Processa a básica: colunas calculadas, remove colunas,
     merge com Combinada e Aircrafts, renomeia, Text.Proper.
@@ -403,6 +431,23 @@ def processar_basica(caminho_bas, df_comb, df_acft):
             if c not in df.columns:
                 df[c] = None
 
+    # ── 12b. Merge com Airports (2x: origem por Aero Icao, destino por
+    #         OD Icao). Traz so State/Country e Region. IATA nao, pois a
+    #         Movimentacao ja tem Aero/OD nativos. Flip renomeia depois.
+    if df_airports is not None:
+        ori = df_airports.rename(columns={
+            "ICAO": "Aero Icao",
+            "State/Country": "State/Country", "Region": "Region"})
+        df = df.merge(ori, on="Aero Icao", how="left")
+        dst = df_airports.rename(columns={
+            "ICAO": "OD Icao",
+            "State/Country": "OD State/Country", "Region": "OD Region"})
+        df = df.merge(dst, on="OD Icao", how="left")
+    else:
+        for c in ["State/Country", "Region", "OD State/Country", "OD Region"]:
+            if c not in df.columns:
+                df[c] = None
+
     # ── 13. Colunas derivadas DEP ───────────────────────────────────
     df["Voo"] = df["Voo"].astype(str)
     df["Fln Icao"] = df["Airline Icao"] + df["Voo"]
@@ -491,14 +536,25 @@ def processar_par(caminho_bas, caminho_comb, aircrafts_path, pasta_saida,
         print(f"  [AVISO] Aircrafts não encontrado: {aircrafts_path}")
         print(f"          Colunas Acft Group / Mtow / Acft Fra Group ficarão vazias.")
 
+    # Carregar Airports (mesma pasta do Aircrafts). Traz State/Country e
+    # Region por ICAO. Se ausente, as 4 colunas de geo ficam vazias.
+    df_airports = None
+    if aircrafts_path:
+        pasta_bases = os.path.dirname(aircrafts_path)
+        df_airports = carregar_airports_geo(pasta_bases)
+        if df_airports is not None:
+            print(f"  Airports:  {len(df_airports)} aeroportos (State/Country, Region)")
+        else:
+            print(f"  [AVISO] Airports não encontrado; State/Country e Region ficarão vazios.")
+
     # Processar Combinada
     print(f"\n  Processando combinada...", end=" ")
     df_comb = processar_combinada(caminho_comb)
     print(f"{len(df_comb)} chaves agrupadas")
 
-    # Processar Básica (inclui merge com Comb e Aircrafts)
+    # Processar Básica (inclui merge com Comb, Aircrafts e Airports)
     print(f"  Processando básica + merges...", end=" ")
-    df = processar_basica(caminho_bas, df_comb, df_acft)
+    df = processar_basica(caminho_bas, df_comb, df_acft, df_airports)
     print(f"{len(df)} linhas")
 
     # Formatar LF: tirar .0 desnecessário (ex: 1.0 → 1, 0.7118 fica)
