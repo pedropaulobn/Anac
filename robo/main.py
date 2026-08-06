@@ -50,11 +50,32 @@ def _extrair_e_enviar(caminho_zip: Path, chave: str,
         print(f"  [--sem-drive] {len(extraidos)} arquivo(s) extraido(s), nao enviados")
         return [], extraidos
 
+    # Para tarifas: o ZIP da ANAC traz o historico inteiro (2011..2026)
+    # dentro. No fluxo automatico o robo so cuida de >= ANO_MINIMO, e
+    # entrega o raw ja com o nome LIMPO (sem sufixo '(N)' de duplicata),
+    # para o Drive nunca acumular '202605 (1).CSV'. Arquivos antigos sao
+    # ignorados (nem raw nem processamento) -- ficam para o .bat historico.
+    processados_final: list[Path] = []
     for arquivo in extraidos:
+        if processa_ticket.eh_tarifa(arquivo.name):
+            ano, _ = processa_ticket._periodo_do_nome(arquivo.name)
+            if ano is None or ano < comum.ANO_MINIMO:
+                continue  # tarifa antiga: ignora (nem envia, nem processa)
+            # Normaliza o nome (remove '(N)') renomeando no disco.
+            limpo = processa_ticket.nome_limpo_tarifa(arquivo.name)
+            if limpo != arquivo.name:
+                novo = arquivo.with_name(limpo)
+                try:
+                    arquivo.rename(novo)
+                    arquivo = novo
+                    print(f"  [nome normalizado] -> {limpo}")
+                except OSError as e:
+                    print(f"  [aviso] nao renomeou {arquivo.name}: {e}", file=sys.stderr)
         if not comum.enviar_gdrive(arquivo, chave):
             falhas.append(f"drive:{arquivo.name}")
+        processados_final.append(arquivo)
 
-    return falhas, extraidos
+    return falhas, processados_final
 
 
 def _parear_movimentacao(extraidos: list[Path]) -> dict[tuple[int, int], dict]:
@@ -143,6 +164,23 @@ def _processar_ticket(extraidos: list[Path], pasta_bases: Path | None,
     # Filtra so os arquivos de tarifa (DOM/INT), tolerante a sufixos que
     # a ANAC as vezes adiciona (ex: '202605 (1).CSV').
     tarifas = [p for p in extraidos if processa_ticket.eh_tarifa(p.name)]
+    if not tarifas:
+        return falhas
+
+    # Piso ANO_MINIMO por ARQUIVO: o ZIP de tarifa da ANAC vem com o
+    # historico inteiro dentro (2011, 2012, ... junto com 2026), mesmo
+    # quando so o "ano 2026" foi baixado. Os formatos antigos tem colunas
+    # diferentes (ex: sem 'nr_tarifa') e nao interessam ao robo -- ficam
+    # para o .bat historico. Aqui processamos so >= ANO_MINIMO.
+    antes = len(tarifas)
+    def _ano_ok(p):
+        ano, _ = processa_ticket._periodo_do_nome(p.name)
+        return ano is not None and ano >= comum.ANO_MINIMO
+    tarifas = [p for p in tarifas if _ano_ok(p)]
+    ignorados = antes - len(tarifas)
+    if ignorados:
+        print(f"  (piso {comum.ANO_MINIMO}: {ignorados} arquivo(s) de tarifa "
+              f"antigo(s) ignorado(s); ficam para o .bat historico)")
     if not tarifas:
         return falhas
 

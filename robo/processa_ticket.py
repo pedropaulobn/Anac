@@ -84,6 +84,21 @@ def classificar_tarifa(nome: str) -> str | None:
     return "int" if base.startswith("INTERNACIONAL") else "dom"
 
 
+def nome_limpo_tarifa(nome: str) -> str:
+    """Remove sufixo de duplicata '(N)' do nome, preservando a extensao.
+
+    '202605 (1).CSV' -> '202605.CSV'
+    '202605(1).CSV'  -> '202605.CSV'
+    'INTERNACIONAL_2025-12 (1).CSV' -> 'INTERNACIONAL_2025-12.CSV'
+    Nomes ja limpos passam inalterados.
+    """
+    base = os.path.basename(nome)
+    raiz, ext = os.path.splitext(base)
+    # Remove ' (N)' ou '(N)' no fim da raiz (com ou sem espaco antes).
+    raiz = re.sub(r"\s*\(\d+\)\s*$", "", raiz).strip()
+    return raiz + ext
+
+
 def _tarifa_int(serie: pd.Series, decimal: str) -> pd.Series:
     """Converte a coluna de tarifa (texto) para inteiro, como o Int64 do M.
 
