@@ -1,20 +1,33 @@
 # -*- coding: utf-8 -*-
 """processa_tudo.py — orquestrador local ("faz tudo que falta").
 
-Roda no .bat local. Em vez de escolher mes a mes, varre as pastas Raw e
-Processado, descobre o que ainda nao foi processado (sempre >= ANO_MINIMO)
-e faz o pipeline completo de cada mes pendente:
+Roda no .bat local (o robo do GitHub NAO importa este modulo). Em vez de
+escolher mes a mes, varre as pastas Raw e Processado, descobre o que ainda
+nao foi processado e faz o pipeline completo de cada mes pendente:
 
     Movimentacao -> Ticket DOM/INT -> Agrupar -> Mesclar (95 colunas)
 
+Dois modos:
+  - SEM --ano (opcao 1 do menu): so olha >= ANO_MINIMO (o ano corrente e
+    o presente). Ao final, gera o arquivo de CONSUMO do ano corrente em
+    Historico/Anual/{ano}.csv, com o Siros anexado (visao passado+futuro).
+  - COM --ano AAAA (opcao 2 do menu): processa aquele ano especifico,
+    SEM o piso ANO_MINIMO -- e assim que o historico (2025 pra tras, que
+    so tem Raw) e processado. Nao gera arquivo de consumo/Siros; para
+    congelar o ano use a opcao "Fechar ano".
+
 Idempotente: o que ja tem _final pronto e pulado (a menos de --forcar).
-So olha 2026 em diante; o historico anterior a 2026 nao e responsabilidade
-deste fluxo (fica congelado). Toda a logica de caminho fica em Python, que
-lida com acentos no path sem os problemas do batch.
+Toda a logica de caminho fica em Python, que lida com acentos no path sem
+os problemas do batch.
+
+Dolar (INT): se algum mes INT for processado, o cache do IPEA e atualizado
+automaticamente uma vez no inicio (a API traz a serie historica inteira num
+call so). Se o IPEA cair, segue com o cache atual. Nao ha mais necessidade
+de rodar a opcao "Atualizar dolar" a mao antes de processar.
 
 Uso (chamado pelo menu.bat):
     python -m robo.processa_tudo --corp "<...>\\Anac" --bases "<...>\\Bases"
-    python -m robo.processa_tudo --corp "..." --bases "..." --ano 2026
+    python -m robo.processa_tudo --corp "..." --bases "..." --ano 2025
     python -m robo.processa_tudo --corp "..." --bases "..." --forcar
 """
 
@@ -23,9 +36,11 @@ from __future__ import annotations
 import argparse
 import os
 import re
+from datetime import date
 from pathlib import Path
 
-from . import comum, processa_mes, processa_ticket, agrupa_ticket, mescla_final
+from . import (comum, processa_mes, processa_ticket, agrupa_ticket,
+               mescla_final, fecha_ano, dolar)
 
 
 def _meses_raw_movimentacao(mov_raw: Path, ano_min: int) -> set[tuple[int, int]]:
@@ -95,8 +110,15 @@ def processar_tudo(corp_anac: str, bases: str, ano_alvo: int | None = None,
     mov_proc.mkdir(parents=True, exist_ok=True)
     tkt_proc.mkdir(parents=True, exist_ok=True)
 
-    ano_min = ano_alvo or comum.ANO_MINIMO
-    # Se um ano especifico foi pedido, restringe a ele; senao, >= ANO_MINIMO.
+    # Piso da varredura:
+    #   - COM --ano: o proprio ano e o piso (ignora ANO_MINIMO). E o que
+    #     libera processar o historico (2025 pra tras), que so tem Raw.
+    #   - SEM --ano: >= ANO_MINIMO (o robo do GitHub cuida do presente; o
+    #     historico fica para a opcao "processar ano especifico").
+    # ANO_MINIMO (em comum.py) NAO e alterado -- ele governa a COLETA do
+    # GitHub. Aqui so decidimos ate onde o .bat local varre.
+    piso = ano_alvo if ano_alvo else comum.ANO_MINIMO
+
     def _no_alvo(ano):
         return ano == ano_alvo if ano_alvo else ano >= comum.ANO_MINIMO
 
@@ -116,18 +138,34 @@ def processar_tudo(corp_anac: str, bases: str, ano_alvo: int | None = None,
     else:
         print()
 
-    pares_mov = {(a, m) for (a, m) in _meses_raw_movimentacao(mov_raw, comum.ANO_MINIMO)
+    pares_mov = {(a, m) for (a, m) in _meses_raw_movimentacao(mov_raw, piso)
                  if _no_alvo(a)}
-    tickets = {(a, m): v for (a, m), v in _meses_raw_ticket(tkt_raw, comum.ANO_MINIMO).items()
+    tickets = {(a, m): v for (a, m), v in _meses_raw_ticket(tkt_raw, piso).items()
                if _no_alvo(a)}
 
     todos_meses = sorted(pares_mov | set(tickets))
     if not todos_meses:
-        print(f"Nada a processar (nenhum bruto >= {comum.ANO_MINIMO}"
-              + (f" no ano {ano_alvo}" if ano_alvo else "") + ").")
+        alvo_txt = f"no ano {ano_alvo}" if ano_alvo else f">= {comum.ANO_MINIMO}"
+        print(f"Nada a processar (nenhum bruto {alvo_txt}).")
+        # Mesmo sem meses novos, o consumo do ano corrente e regerado
+        # (o Siros muda todo dia). Faz sentido so no modo sem --ano.
+        if ano_alvo is None:
+            _gerar_consumo(corp, mov_proc)
         return 0
 
     print(f"Meses com bruto disponivel: {len(todos_meses)}")
+
+    # Dolar automatico: se ha algum mes com INT a processar, atualiza o
+    # cache do IPEA UMA vez (a serie historica inteira vem num call so).
+    # Se o IPEA cair, atualizar() mantem o cache atual e segue.
+    tem_int = any("int" in tickets.get(km, {}) for km in tickets)
+    if tem_int:
+        print("\n  Atualizando cache do dolar (IPEA) antes do Ticket INT...")
+        try:
+            dolar.atualizar(bases)
+        except Exception as e:  # noqa: BLE001
+            print(f"  [dolar] falha ao atualizar (segue com cache): {str(e)[:120]}")
+
     falhas = 0
     processados, pulados = 0, 0
 
@@ -193,14 +231,42 @@ def processar_tudo(corp_anac: str, bases: str, ano_alvo: int | None = None,
     print(f"  Concluido: {processados} processado(s), {pulados} ja pronto(s), "
           f"{falhas} falha(s)")
     print(f"{'='*60}")
+
+    # Arquivo de consumo do ano corrente (finais + Siros). So no modo sem
+    # --ano; ao processar um ano historico especifico, use "Fechar ano".
+    if ano_alvo is None:
+        _gerar_consumo(corp, mov_proc)
+
     return falhas
 
 
+def _gerar_consumo(corp: Path, mov_proc: Path) -> None:
+    """Regenera Historico/Anual/{ano_corrente}.csv com Siros anexado.
+
+    Chamado ao fim da opcao 1. E o arquivo que o BI consome; atualiza todo
+    dia (o Siros muda diariamente). Se o siros.csv nao estiver no corp, a
+    propria fechar_ano_vivo avisa e preserva o arquivo anterior.
+    """
+    ano_corrente = date.today().year
+    hist_anual = corp / "Historico" / "Anual"
+    siros_proc = corp / "Siros" / "Processado"
+    print(f"\n{'='*60}\n  Gerando consumo do ano corrente ({ano_corrente})\n{'='*60}")
+    try:
+        fecha_ano.fechar_ano_vivo(str(mov_proc), ano_corrente,
+                                  str(hist_anual), str(siros_proc))
+    except Exception as e:  # noqa: BLE001
+        print(f"  [ERRO] ao gerar consumo {ano_corrente}: {e}")
+
+
 def _cli() -> int:
-    p = argparse.ArgumentParser(description="Processa tudo que falta (>= ANO_MINIMO)")
+    p = argparse.ArgumentParser(
+        description="Processa tudo que falta. Sem --ano: >= ANO_MINIMO + "
+                    "gera consumo do ano corrente. Com --ano: aquele ano "
+                    "(historico), sem piso.")
     p.add_argument("--corp", required=True, help="raiz Anac do OneDrive corp")
     p.add_argument("--bases", required=True, help="pasta Bases")
-    p.add_argument("--ano", type=int, help="restringe a um ano especifico")
+    p.add_argument("--ano", type=int,
+                   help="processa um ano especifico (historico), ignora ANO_MINIMO")
     p.add_argument("--forcar", action="store_true",
                    help="reprocessa mesmo os que ja tem _final")
     args = p.parse_args()

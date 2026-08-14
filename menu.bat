@@ -66,57 +66,78 @@ echo ============================================================
 echo   Pasta corp: %CORP%
 echo ============================================================
 echo.
-echo   PRINCIPAL
-echo   1. Processar TUDO que falta (detecta sozinho, ^>= 2026)
-echo   2. Processar tudo de um ANO especifico
+echo   PRINCIPAL (uso diario / fechamento)
+echo   1. Atualizar consumo do ano corrente
+echo      (processa pendencias ^>= 2026 + gera Anual\AAAA.csv com Siros)
+echo   2. Processar um ANO historico completo (2025 pra tras)
+echo   3. Fechar ano (12 finais -^> AAAA.csv congelado)
+echo   4. Gerar stack multi-ano (Agrupado)
 echo.
-echo   AVULSO (um mes)
-echo   3. Movimentacao (mes)
-echo   4. Ticket DOM (mes)
-echo   5. Ticket INT (mes)
-echo   6. Agrupar Ticket DOM+INT (mes)
-echo   7. Mesclar Ticket + flip (mes)
-echo   8. Siros (voos futuros)
-echo.
-echo   FECHAMENTO E HISTORICO
-echo   9. Fechar ano (12 finais -^> AAAA.csv)
-echo  10. Gerar stack multi-ano (Agrupado)
+echo   AVULSO -- corrigir um mes especifico (uso raro)
+echo   5. Movimentacao (mes)
+echo   6. Ticket DOM (mes)
+echo   7. Ticket INT (mes)
+echo   8. Agrupar Ticket DOM+INT (mes)
+echo   9. Mesclar Ticket + flip (mes)
+echo  10. Siros local (reprocessar voos.csv)
 echo.
 echo   MANUTENCAO
 echo  11. Mover Pessoal -^> Corp + sincronizar Bases
-echo  12. Atualizar cotacao do dolar (IPEA)
+echo  12. Atualizar cotacao do dolar (IPEA)  [normalmente automatico]
 echo.
 echo   0. Sair
 echo.
 set /p OP=Escolha uma opcao:
 
-if "%OP%"=="1" goto TUDO
+if "%OP%"=="1" goto CONSUMO
 if "%OP%"=="2" goto TUDO_ANO
-if "%OP%"=="3" goto MOV
-if "%OP%"=="4" goto TKT_DOM
-if "%OP%"=="5" goto TKT_INT
-if "%OP%"=="6" goto AGRUPA
-if "%OP%"=="7" goto MESCLA
-if "%OP%"=="8" goto SIROS
-if "%OP%"=="9" goto FECHA
-if "%OP%"=="10" goto STACK
+if "%OP%"=="3" goto FECHA
+if "%OP%"=="4" goto STACK
+if "%OP%"=="5" goto MOV
+if "%OP%"=="6" goto TKT_DOM
+if "%OP%"=="7" goto TKT_INT
+if "%OP%"=="8" goto AGRUPA
+if "%OP%"=="9" goto MESCLA
+if "%OP%"=="10" goto SIROS
 if "%OP%"=="11" goto MOVER
 if "%OP%"=="12" goto DOLAR
 if "%OP%"=="0" goto FIM
 goto MENU
 
-:TUDO
+REM ================= PRINCIPAL =================
+
+:CONSUMO
 echo.
-echo Detectando e processando tudo que falta (^>= 2026)...
+echo Processando pendencias (^>= 2026) e gerando o consumo do ano corrente...
+echo (o dolar do IPEA e atualizado sozinho se houver Ticket INT)
 python -m robo.processa_tudo --corp "%CORP_ANAC%" --bases "%BASES%"
 pause
 goto MENU
 
 :TUDO_ANO
+echo.
+echo Processa um ano historico completo (so tem Raw, gera todos os finais).
+echo Sem piso de ano -- aceita 2010, 2025, etc. Nao gera Siros/consumo;
+echo para congelar depois, use a opcao 3 (Fechar ano).
 set /p A=Ano (AAAA):
 python -m robo.processa_tudo --corp "%CORP_ANAC%" --bases "%BASES%" --ano %A%
 pause
 goto MENU
+
+:FECHA
+set /p A=Ano a fechar (AAAA):
+python -m robo.fecha_ano --ano %A% --finais "%MOV_PROC%" --saida "%HIST_ANUAL%"
+pause
+goto MENU
+
+:STACK
+set /p INI=Ano inicial:
+set /p FIM=Ano final:
+python -m robo.fecha_ano --stack %INI% %FIM% --anual "%HIST_ANUAL%" --saida "%HIST_AGRUP%"
+pause
+goto MENU
+
+REM ================= AVULSO (um mes) =================
 
 :MOV
 set /p P=Periodo (AAAA-MM):
@@ -128,14 +149,14 @@ goto MENU
 set /p P=Periodo (AAAA-MM):
 set "AAAA=%P:~0,4%"
 set "MM=%P:~5,2%"
-if not exist "%TKT_RAW%\%AAAA%%MM%.CSV" ( echo [!] nao encontrado: %TKT_RAW%\%AAAA%%MM%.CSV & pause & goto MENU )
+if not exist "%TKT_RAW%\%AAAA%%MM%.CSV" ( echo [!] nao encontrado: %TKT_RAW%\%AAAA%%MM%.CSV ^& pause ^& goto MENU )
 python -m robo.processa_ticket "%TKT_RAW%\%AAAA%%MM%.CSV" --saida "%TKT_PROC%" --tipo dom
 pause
 goto MENU
 
 :TKT_INT
 set /p P=Periodo (AAAA-MM):
-if not exist "%TKT_RAW%\INTERNACIONAL_%P%.CSV" ( echo [!] nao encontrado: %TKT_RAW%\INTERNACIONAL_%P%.CSV & pause & goto MENU )
+if not exist "%TKT_RAW%\INTERNACIONAL_%P%.CSV" ( echo [!] nao encontrado: %TKT_RAW%\INTERNACIONAL_%P%.CSV ^& pause ^& goto MENU )
 python -m robo.processa_ticket "%TKT_RAW%\INTERNACIONAL_%P%.CSV" --saida "%TKT_PROC%" --bases "%BASES%" --tipo int
 pause
 goto MENU
@@ -159,18 +180,7 @@ python -m robo.processa_siros "%SIROS_RAW%\voos.csv" --saida "%SIROS_PROC%" --ba
 pause
 goto MENU
 
-:FECHA
-set /p A=Ano a fechar (AAAA):
-python -m robo.fecha_ano --ano %A% --finais "%MOV_PROC%" --saida "%HIST_ANUAL%"
-pause
-goto MENU
-
-:STACK
-set /p INI=Ano inicial:
-set /p FIM=Ano final:
-python -m robo.fecha_ano --stack %INI% %FIM% --anual "%HIST_ANUAL%" --saida "%HIST_AGRUP%"
-pause
-goto MENU
+REM ================= MANUTENCAO =================
 
 :MOVER
 python -m robo.move_arquivos --pessoal "%PESSOAL_ANAC%" --corp "%CORP_ANAC%" --bases-corp "%BASES%" --bases-pessoal "%PESSOAL_BASES%"
