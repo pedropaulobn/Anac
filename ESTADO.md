@@ -1,6 +1,6 @@
 # Estado da coleta
 
-Última execução do robô: **24/08/2026 09:41 UTC**
+Última execução do robô: **25/08/2026 09:29 UTC**
 
 | Fonte | Último período | Publicado no site | Coletado em | Tamanho | Situação |
 |---|---|---|---|---|---|
