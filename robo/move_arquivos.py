@@ -29,6 +29,7 @@ SUBPASTAS = [
     r"Anac\Ticket\Processado",
     r"Anac\Siros\Raw",
     r"Anac\Siros\Processado",
+    r"Anac\Siros\Mensal",
 ]
 
 ESPERA_DOWNLOAD = 300   # segundos maximos aguardando materializar

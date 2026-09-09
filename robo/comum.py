@@ -283,6 +283,11 @@ def _destino_processado(chave: str) -> tuple[str, str]:
         return f"{DRIVE_RAIZ}/Anac/Movimentacao/Processado/", "acumula"
     if chave.startswith("tarifas/dom/") or chave.startswith("tarifas/int/"):
         return f"{DRIVE_RAIZ}/Anac/Ticket/Processado/", "acumula"
+    # Precisa vir ANTES do "siros/" generico abaixo: siros/mensal/AAAA-MM
+    # tambem comeca com "siros/", mas vai para uma pasta separada e com
+    # nome de arquivo variavel por mes (nunca sobrescreve outro mes).
+    if chave.startswith("siros/mensal/"):
+        return f"{DRIVE_RAIZ}/Anac/Siros/Mensal/", "acumula"
     if chave.startswith("siros/"):
         return f"{DRIVE_RAIZ}/Anac/Siros/Processado/", "substitui"
     raise ValueError(f"origem nao reconhecida para processado: {chave!r}")

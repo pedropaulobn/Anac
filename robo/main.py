@@ -26,6 +26,7 @@ from . import comum, datasas, estado, microdados, siros
 # Modulos de processamento (opcionais no fluxo: se faltar base, o raw
 # ainda sobe e o processamento e apenas pulado).
 from . import processa_mes, processa_ticket, processa_siros, dolar, gerar_links
+from . import siros_mensal
 
 
 def _extrair_e_enviar(caminho_zip: Path, chave: str,
@@ -217,8 +218,16 @@ def _processar_ticket(extraidos: list[Path], pasta_bases: Path | None,
 
 
 def _processar_siros(extraidos: list[Path], pasta_bases: Path | None,
-                     sem_drive: bool) -> list[str]:
-    """Processa o voos.csv extraido (SIROS) e envia ao Drive (substitutivo)."""
+                     sem_drive: bool, manifest: dict) -> list[str]:
+    """Processa o voos.csv extraido (SIROS) e envia ao Drive (substitutivo).
+
+    Alem do envio diario de sempre, verifica se o mes corrente ja tem um
+    snapshot congelado em Siros/Mensal/ (chave 'siros/mensal/AAAA-MM' no
+    manifest). Se nao tiver, filtra o siros.csv recem-gerado para o mes
+    corrente e sobe um arquivo novo, fixo, que nunca mais e sobrescrito
+    (ver siros_mensal.py). Falha nessa etapa extra nao derruba o run --
+    o siros.csv diario (que alimenta o consumo de hoje) ja subiu normal.
+    """
     falhas: list[str] = []
     voos = [p for p in extraidos if p.name.lower() == "voos.csv"]
     if not voos:
@@ -242,6 +251,25 @@ def _processar_siros(extraidos: list[Path], pasta_bases: Path | None,
         return falhas
     if not comum.enviar_gdrive_processado(Path(csv), "siros/voos"):
         falhas.append("drive_proc_siros")
+
+    # Snapshot mensal: roda uma vez por mes, so quando ainda nao existe.
+    periodo = siros_mensal.periodo_atual()
+    if siros_mensal.ja_capturado(manifest, periodo):
+        print(f"  [siros-mensal] {periodo} ja congelado; nada a fazer")
+    else:
+        try:
+            mensal = siros_mensal.congelar(csv, saida, periodo)
+        except Exception as e:  # noqa: BLE001
+            print(f"  [siros-mensal] ERRO ao congelar {periodo}: {e}", file=sys.stderr)
+            mensal = None
+            falhas.append("siros_mensal")
+        if mensal:
+            if comum.enviar_gdrive_processado(Path(mensal), siros_mensal.chave(periodo)):
+                comum.registrar(manifest, siros_mensal.chave(periodo),
+                                situacao="congelado")
+            else:
+                falhas.append("drive_proc_siros_mensal")
+
     return falhas
 
 
@@ -336,7 +364,7 @@ def main() -> int:
         falhas.extend(_processar_ticket(extraidos_todos, pasta_bases,
                                         args.sem_drive))
         falhas.extend(_processar_siros(extraidos_todos, pasta_bases,
-                                       args.sem_drive))
+                                       args.sem_drive, manifest))
 
     # Regenera o links.csv (inventario de links de download que o PC
     # corporativo usa para baixar sem logar no Google). Roda SEMPRE no
