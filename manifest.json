@@ -258,14 +258,14 @@
       "verificado_em": "2026-09-09T22:58:50+00:00"
     },
     "siros/voos": {
-      "bytes_zip": 12517766,
+      "bytes_zip": 12501239,
       "coletado_em": "2026-08-06T15:04:12+00:00",
-      "impressao": "d5d176f7f89374a331ad3bce36276a8eedb837d3bbfdb0b49dd259ad8094b266",
-      "publicado_em": "9/20/2026 5:07 AM",
-      "sha256": "7a293fe2a9d60ef93c49ec0b164f3e4b2e67f625f1ec87a9df2c8d67122fbfb8",
+      "impressao": "4c05b029b4ce55eed26bbf12f114d86d69c2cd92d1f76b68890aa5a260391952",
+      "publicado_em": "9/21/2026 5:08 AM",
+      "sha256": "9b78ecb76d8e6b92f4a936e5d3d2d73545bae82ed673010cf0ade1ea994632df",
       "situacao": "atualizado",
       "url": "https://siros.anac.gov.br/siros/registros/voos/voos.zip",
-      "verificado_em": "2026-09-20T13:19:29+00:00"
+      "verificado_em": "2026-09-21T15:29:43+00:00"
     },
     "tarifas/dom/2002": {
       "bytes_zip": 246169,
@@ -860,7 +860,7 @@
       "sha256": "9c324038261e6ebf1db236069c58780ed16486b4cc00b3cacfcfcc3009c1573d",
       "situacao": "inalterado",
       "url": "https://sas.anac.gov.br/sas/downloads/view/frmDownload.aspx",
-      "verificado_em": "2026-09-20T13:19:39+00:00"
+      "verificado_em": "2026-09-21T15:29:55+00:00"
     },
     "tarifas/int/2025": {
       "bytes_zip": 3493301,
@@ -887,7 +887,7 @@
       "verificado_em": "2026-07-25T01:55:38+00:00"
     }
   },
-  "gerado_em": "2026-09-20T13:21:54+00:00",
+  "gerado_em": "2026-09-21T15:32:33+00:00",
   "pagina_microdados": {
     "atualizado": "18/09/2026 08h45",
     "inventario": {
@@ -901,6 +901,6 @@
       }
     },
     "publicado": "11/08/2020 10h55",
-    "verificado_em": "2026-09-20T13:19:30+00:00"
+    "verificado_em": "2026-09-21T15:29:45+00:00"
   }
 }
