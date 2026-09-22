@@ -258,14 +258,14 @@
       "verificado_em": "2026-09-09T22:58:50+00:00"
     },
     "siros/voos": {
-      "bytes_zip": 12501239,
+      "bytes_zip": 12489668,
       "coletado_em": "2026-08-06T15:04:12+00:00",
-      "impressao": "4c05b029b4ce55eed26bbf12f114d86d69c2cd92d1f76b68890aa5a260391952",
-      "publicado_em": "9/21/2026 5:08 AM",
-      "sha256": "9b78ecb76d8e6b92f4a936e5d3d2d73545bae82ed673010cf0ade1ea994632df",
+      "impressao": "7856a7ccf0ff096167aef78ff0f677d265a25682bb92768c8a7c0249a8f1818d",
+      "publicado_em": "9/22/2026 5:07 AM",
+      "sha256": "f204307f44a7d297fa2222f69bc3b7e6c311334a515c72fd8e76f27fef613324",
       "situacao": "atualizado",
       "url": "https://siros.anac.gov.br/siros/registros/voos/voos.zip",
-      "verificado_em": "2026-09-21T15:29:43+00:00"
+      "verificado_em": "2026-09-22T13:47:37+00:00"
     },
     "tarifas/dom/2002": {
       "bytes_zip": 246169,
@@ -844,9 +844,9 @@
       "verificado_em": "2026-07-28T11:29:37+00:00"
     },
     "tarifas/dom/2026": {
-      "bytes_zip": 25000832,
+      "bytes_zip": 28652768,
       "coletado_em": "2026-08-06T15:07:11+00:00",
-      "impressao": "32faec7a95eae1340b7dbef00a37a8bd2262ee73b982a82bc7df705cbe5a79dd",
+      "impressao": "6b8ff9f41a22c1c54e8742bee185046b8c156e22070314f5335dea942dce8a0c",
       "meses": {
         "01": "20/03/2026 10:42:46",
         "02": "20/03/2026 10:43:31",
@@ -854,13 +854,14 @@
         "04": "15/05/2026 10:54:47",
         "05": "24/06/2026 10:47:03",
         "06": "20/08/2026 10:12:00",
-        "07": "20/08/2026 10:11:07"
+        "07": "20/08/2026 10:11:07",
+        "08": "22/09/2026 10:15:49"
       },
       "publicado_em": "28/04/2026 10:32:02",
-      "sha256": "9c324038261e6ebf1db236069c58780ed16486b4cc00b3cacfcfcc3009c1573d",
-      "situacao": "inalterado",
+      "sha256": "018186d374f31e9e7a0f58f94f78f76073b39892a6d7cd82577e8d12328d7bb5",
+      "situacao": "atualizado",
       "url": "https://sas.anac.gov.br/sas/downloads/view/frmDownload.aspx",
-      "verificado_em": "2026-09-21T15:29:55+00:00"
+      "verificado_em": "2026-09-22T13:48:45+00:00"
     },
     "tarifas/int/2025": {
       "bytes_zip": 3493301,
@@ -887,7 +888,7 @@
       "verificado_em": "2026-07-25T01:55:38+00:00"
     }
   },
-  "gerado_em": "2026-09-21T15:32:33+00:00",
+  "gerado_em": "2026-09-22T13:53:48+00:00",
   "pagina_microdados": {
     "atualizado": "18/09/2026 08h45",
     "inventario": {
@@ -901,6 +902,6 @@
       }
     },
     "publicado": "11/08/2020 10h55",
-    "verificado_em": "2026-09-21T15:29:45+00:00"
+    "verificado_em": "2026-09-22T13:47:39+00:00"
   }
 }
