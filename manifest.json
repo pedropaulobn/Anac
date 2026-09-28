@@ -263,9 +263,9 @@
       "impressao": "b278a7e9c711a508c811bd90be5d0391af1dd95690fd9aaa066c95dbd327bdc6",
       "publicado_em": "9/28/2026 5:07 AM",
       "sha256": "90568fe84cd532515f43591c2afad5f629248214758212b897868507967384a2",
-      "situacao": "atualizado",
+      "situacao": "inalterado",
       "url": "https://siros.anac.gov.br/siros/registros/voos/voos.zip",
-      "verificado_em": "2026-09-28T17:10:57+00:00"
+      "verificado_em": "2026-09-28T20:34:19+00:00"
     },
     "tarifas/dom/2002": {
       "bytes_zip": 246169,
@@ -888,7 +888,7 @@
       "verificado_em": "2026-07-25T01:55:38+00:00"
     }
   },
-  "gerado_em": "2026-09-28T17:13:43+00:00",
+  "gerado_em": "2026-09-28T20:34:42+00:00",
   "pagina_microdados": {
     "atualizado": "18/09/2026 08h45",
     "inventario": {
