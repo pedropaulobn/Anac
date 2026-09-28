@@ -25,7 +25,7 @@ from . import comum, datasas, estado, microdados, siros
 
 # Modulos de processamento (opcionais no fluxo: se faltar base, o raw
 # ainda sobe e o processamento e apenas pulado).
-from . import processa_mes, processa_ticket, processa_siros, dolar, gerar_links
+from . import processa_mes, processa_ticket, processa_siros, dolar, gerar_links, carrega_bigquery
 from . import siros_mensal
 
 
@@ -251,6 +251,16 @@ def _processar_siros(extraidos: list[Path], pasta_bases: Path | None,
         return falhas
     if not comum.enviar_gdrive_processado(Path(csv), "siros/voos"):
         falhas.append("drive_proc_siros")
+
+    # Carga no BigQuery (aviacao_mercado): resumo internacional/domestico
+    # pra consulta rapida. Nao derruba o run -- so loga em caso de erro.
+    try:
+        stats = carrega_bigquery.carregar(csv)
+        print(f"  [bigquery] internacional={stats['internacional']:,} "
+              f"domestico={stats['domestico']:,}")
+    except Exception as e:  # noqa: BLE001
+        print(f"  [bigquery] ERRO ao carregar: {e}", file=sys.stderr)
+        falhas.append("bigquery_siros")
 
     # Snapshot mensal: roda uma vez por mes, so quando ainda nao existe.
     periodo = siros_mensal.periodo_atual()
