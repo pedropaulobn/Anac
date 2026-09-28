@@ -115,7 +115,7 @@ def _preparar_internacional(df: pd.DataFrame, data_extracao: str) -> pd.DataFram
         "empresa_nome": base.get("Airline"),
         "voo": base.get("Voo"),
         "aeronave": base.get("Aircraft"),
-        "assentos": pd.to_numeric(base.get("Seats"), errors="coerce"),
+        "assentos": pd.to_numeric(base.get("Seats"), errors="coerce").astype("Int64"),
         "tipo": base.get("Group"),  # Pax/Cargo/Others
         "hora_local": base.get("Hora"),
         "data_extracao": data_extracao,
