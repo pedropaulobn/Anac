@@ -62,6 +62,8 @@ jobs:
           echo "rclone.conf criado com $(wc -l < ~/.config/rclone/rclone.conf) linha(s)"
 
       - name: Executar coleta
+        env:
+          GCP_SA_KEY_BIGQUERY: ${{ secrets.GCP_SA_KEY_BIGQUERY }}
         run: |
           if [ "${{ inputs.explorar }}" = "true" ]; then
             python -m robo.main --fonte datasas --explorar
