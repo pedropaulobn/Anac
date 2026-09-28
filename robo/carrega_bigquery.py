@@ -1,0 +1,1 @@
+$(cat carrega_bigquery.py)
