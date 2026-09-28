@@ -2,3 +2,4 @@ requests>=2.31
 playwright>=1.45
 pandas>=2.2
 openpyxl>=3.1
+google-cloud-bigquery>=3.25
