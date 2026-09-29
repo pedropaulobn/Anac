@@ -10,6 +10,7 @@ os 12 MB do download.
 
 from __future__ import annotations
 
+import os
 import re
 from pathlib import Path
 
@@ -43,7 +44,12 @@ def listar(s=None) -> dict[str, dict]:
 
 def coletar(m: dict) -> list[tuple[str, str, Path]]:
     s = comum.sessao()
-    entrada = m["arquivos"].get(CHAVE, {})
+    # FORCAR_SIROS=true (input do workflow): ignora o registro do manifest e
+    # baixa/reprocessa mesmo que o site nao tenha mudado.
+    forcar = os.environ.get("FORCAR_SIROS", "").lower() == "true"
+    entrada = {} if forcar else m["arquivos"].get(CHAVE, {})
+    if forcar:
+        print("[SIROS] FORCAR_SIROS=true: ignorando o registro do manifest")
 
     itens = listar(s)
     anuncio = itens.get("voos.zip")
