@@ -22,6 +22,11 @@ on:
         required: false
         default: false
         type: boolean
+      forcar_siros:
+        description: "Reprocessar o SIROS mesmo sem mudanca no site"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -63,7 +68,7 @@ jobs:
 
       - name: Executar coleta
         env:
-          GCP_SA_KEY_BIGQUERY: ${{ secrets.GCP_SA_KEY_BIGQUERY }}
+          FORCAR_SIROS: ${{ inputs.forcar_siros }}
         run: |
           if [ "${{ inputs.explorar }}" = "true" ]; then
             python -m robo.main --fonte datasas --explorar
