@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
-"""carrega_bigquery.py — le o siros.csv (DEP+ARR ja processado) e carrega
-duas tabelas no BigQuery (projeto barsa-509512, dataset aviacao_mercado):
+"""carrega_bigquery.py -- gera os 2 CSVs de resumo do BigQuery a partir do
+siros.csv (DEP+ARR ja processado) e os envia ao Drive.
 
-  siros_internacional     grao diario, so voos internacionais, 23 aeroportos
-                           de interesse (Fraport + concorrentes/vizinhos).
-  siros_domestico_resumo  agregado por mes/aeroporto/OD/empresa, so voos
-                           domesticos de POA/FOR/JJD (frequencia + assentos).
+A CARGA no BigQuery deixou de ser feita aqui (fluxo 29/09/2026):
+o robo so gera os arquivos e sobe pro Drive; o BigQuery le do Drive
+(tabela externa ou carga feita pela Barsa). Assim uma falha de carga
+nunca derruba o run e o arquivo ja esta no Drive para retentar.
 
-Ambas as tabelas sao SUBSTITUIDAS a cada rodada (WRITE_TRUNCATE), pelo
-mesmo motivo que o siros.csv em si e substitutivo: a base reflete a malha
-"vista de hoje" para o futuro, nao um historico. Comparacao dia-a-dia fica
-por conta do agente que consome isso (Claude), nao de acumulo aqui dentro.
+  siros_internacional.csv     grao diario, so voos internacionais, 23
+                              aeroportos de interesse (Fraport + concorrentes/vizinhos).
+  siros_domestico_resumo.csv  agregado por mes/aeroporto/OD/empresa, so voos
+                              domesticos de POA/FOR/JJD (frequencia + assentos).
+
+Ambos sao SUBSTITUIDOS a cada rodada (a base e a malha "vista de hoje").
+Destino no Drive: gdrive:Sync/Fraport/Anac/Siros/BigQuery/
 
 Nunca derruba o run principal: qualquer excecao e logada e engolida por
 quem chama (ver robo/main.py, _processar_siros).
@@ -18,12 +21,13 @@ quem chama (ver robo/main.py, _processar_siros).
 
 from __future__ import annotations
 
-import io
-import json
-import os
+import subprocess
 from datetime import date
+from pathlib import Path
 
 import pandas as pd
+
+from . import comum
 
 PROJETO = "barsa-509512"
 DATASET = "aviacao_mercado"
@@ -64,25 +68,6 @@ _DIAS_SEMANA_PT = {
     0: "segunda", 1: "terca", 2: "quarta", 3: "quinta",
     4: "sexta", 5: "sabado", 6: "domingo",
 }
-
-
-def _client():
-    """Cria o client do BigQuery a partir da credencial em
-    GCP_SA_KEY_BIGQUERY (conteudo JSON da service account, no ambiente).
-    Import tardio de google-cloud-bigquery para nao quebrar quem nao usa
-    esta etapa (requirements.txt so precisa listar a lib pra quem chamar)."""
-    from google.cloud import bigquery
-    from google.oauth2 import service_account
-
-    chave_json = os.environ.get("GCP_SA_KEY_BIGQUERY")
-    if not chave_json:
-        raise RuntimeError(
-            "GCP_SA_KEY_BIGQUERY nao encontrada no ambiente "
-            "(configure o secret no GitHub Actions)."
-        )
-    info = json.loads(chave_json)
-    credenciais = service_account.Credentials.from_service_account_info(info)
-    return bigquery.Client(project=PROJETO, credentials=credenciais)
 
 
 def _preparar_internacional(df: pd.DataFrame, data_extracao: str) -> pd.DataFrame:
@@ -163,11 +148,25 @@ def _preparar_domestico_resumo(df: pd.DataFrame, data_extracao: str) -> pd.DataF
     return agrupado
 
 
-def carregar(caminho_siros_csv: str, data_extracao: str | None = None) -> dict:
-    """Le o siros.csv, monta as duas tabelas e substitui (WRITE_TRUNCATE)
-    no BigQuery. Devolve {"internacional": n_linhas, "domestico": n_linhas}."""
-    from google.cloud import bigquery
+DESTINO_DRIVE = f"{comum.DRIVE_RAIZ}/Anac/Siros/BigQuery/"
 
+
+def _enviar_drive(caminho: Path) -> None:
+    """rclone copy (sobrescreve o mesmo nome). Levanta erro se falhar."""
+    cmd = [comum.rclone_bin(), "copy", str(caminho), DESTINO_DRIVE, "--verbose"]
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
+    if r.returncode != 0:
+        raise RuntimeError(f"rclone falhou ({r.returncode}): {r.stderr.strip()[-500:]}")
+    print(f"  [bigquery-drive] {caminho.name} ({caminho.stat().st_size/1_048_576:.1f} MB) "
+          f"-> {DESTINO_DRIVE}")
+
+
+def carregar(caminho_siros_csv: str, data_extracao: str | None = None) -> dict:
+    """Le o siros.csv, gera os 2 CSVs de resumo e envia ao Drive.
+
+    Mantem o nome/retorno antigo ({"internacional": n, "domestico": n})
+    para nao mexer em robo/main.py.
+    """
     data_extracao = data_extracao or date.today().isoformat()
 
     df = pd.read_csv(caminho_siros_csv, sep=";", encoding="utf-8-sig", dtype=str)
@@ -176,26 +175,13 @@ def carregar(caminho_siros_csv: str, data_extracao: str | None = None) -> dict:
     intl = _preparar_internacional(df, data_extracao)
     dom = _preparar_domestico_resumo(df, data_extracao)
 
-    cliente = _client()
+    saida = Path(comum.tmp()) / "bigquery"
+    saida.mkdir(parents=True, exist_ok=True)
 
-    for nome_tabela, tabela_df in (
-        (TABELA_INTL, intl),
-        (TABELA_DOM, dom),
-    ):
-        destino = f"{PROJETO}.{DATASET}.{nome_tabela}"
-        job_config = bigquery.LoadJobConfig(
-            write_disposition="WRITE_TRUNCATE",
-            source_format=bigquery.SourceFormat.CSV,
-            skip_leading_rows=1,
-            autodetect=False,
-        )
-        # Carrega via CSV em memoria (mantem o schema ja criado na tabela,
-        # evitando reinferir tipos a cada rodada).
-        buffer = io.StringIO()
-        tabela_df.to_csv(buffer, index=False)
-        buffer.seek(0)
-        job = cliente.load_table_from_file(buffer, destino, job_config=job_config)
-        job.result()
-        print(f"  [bigquery] {nome_tabela}: {len(tabela_df):,} linhas carregadas")
+    for nome, tabela_df in ((TABELA_INTL, intl), (TABELA_DOM, dom)):
+        arq = saida / f"{nome}.csv"
+        # utf-8 puro (sem BOM), virgula, cabecalho na 1a linha
+        tabela_df.to_csv(arq, index=False, encoding="utf-8")
+        _enviar_drive(arq)
 
     return {"internacional": len(intl), "domestico": len(dom)}
