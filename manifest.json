@@ -100,31 +100,40 @@
       "verificado_em": "2026-07-25T10:23:43+00:00"
     },
     "basica/202606": {
-      "bytes_zip": 8376867,
+      "bytes_zip": 8376315,
       "coletado_em": "2026-08-06T15:04:27+00:00",
-      "impressao": "b5171d61883e2643f1720f49cab1387cddd5c3c73fe13c5f7a5224bcab76dd16",
-      "sha256": "b6b4be56208436685f65022fd1dde0bba3bd85977c945ddfcfb66872ef9ff2f0",
+      "impressao": "7a5c26ba2d25b320a9d49d5c0beecadb4c89a549de564d4a0e4cff97ea88d747",
+      "sha256": "e376e102644d4258aae48cc78136fb2417f6abfed8ecea54b88e794d95a5b58b",
       "situacao": "republicado",
       "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica2026-06.zip",
-      "verificado_em": "2026-09-18T13:17:05+00:00"
+      "verificado_em": "2026-10-21T14:15:09+00:00"
     },
     "basica/202607": {
-      "bytes_zip": 9261154,
+      "bytes_zip": 9252851,
       "coletado_em": "2026-07-24T17:53:08+00:00",
-      "impressao": "7ff4cf72f5a34d76aa8974d299ed423e236f996c5070498e9b3ec1fbc8dec2d3",
-      "sha256": "6392bee067622517016dd4db392cf2ce454fccca8451da81524a84162e3f2f29",
+      "impressao": "f504ea6fbbc16cbc4f4069d6753bef9738585d437cd9bd15aec92dd896f13a8e",
+      "sha256": "21e3e9084104a1e9a597983487ab8b4bb69cce7724995a70c0ecd23704286eac",
       "situacao": "republicado",
       "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica2026-07.zip",
-      "verificado_em": "2026-09-18T13:17:19+00:00"
+      "verificado_em": "2026-10-21T14:15:23+00:00"
     },
     "basica/202608": {
-      "bytes_zip": 9164495,
+      "bytes_zip": 9176896,
       "coletado_em": "2026-09-18T13:16:21+00:00",
-      "impressao": "cc6a6ed06a4c811954dd812a66367ad8e077991244085e809fc79851c357f058",
-      "sha256": "8c6adecc1a25a52ebff1aa45dcabef3df4158a890ab0a3f1f62d7c9738fd9b37",
-      "situacao": "novo",
+      "impressao": "017ce38129b690ea24e33566bde960c7324c4dcb9b0e536f983ff55075d32a1d",
+      "sha256": "9ba369c37ebd1dd404ce458c720147615e822e304da560104201eaf152f929f4",
+      "situacao": "republicado",
       "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica2026-08.zip",
-      "verificado_em": "2026-09-18T13:16:21+00:00"
+      "verificado_em": "2026-10-21T14:15:37+00:00"
+    },
+    "basica/202609": {
+      "bytes_zip": 8828115,
+      "coletado_em": "2026-10-21T14:14:50+00:00",
+      "impressao": "98578f407f1949dca4ca8b9d0503226914468210e105e9fcf91bba5e8e164412",
+      "sha256": "0af6190f9b4bf6f3c532a3813d039a6c5f90137fc340698e079093d493dc930f",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/basica/2026/basica2026-09.zip",
+      "verificado_em": "2026-10-21T14:14:50+00:00"
     },
     "combinada/202507": {
       "bytes_zip": 7797566,
@@ -226,31 +235,40 @@
       "verificado_em": "2026-07-25T10:25:55+00:00"
     },
     "combinada/202606": {
-      "bytes_zip": 7147013,
+      "bytes_zip": 7145996,
       "coletado_em": "2026-08-06T15:04:37+00:00",
-      "impressao": "5ed10dfa2fd4c25b066d1fdb17b070a6238815e34c03cdb447c5d120c6188309",
-      "sha256": "9fb33bf233138dd5ceede31badf46ef96f934f8169ffcd987b2d817acdc7a63e",
+      "impressao": "66df4998ffe90af6a21907301ab542a0092094743f408f74f6e7313f906338e5",
+      "sha256": "26b2dba14c4398c9880ebf986b9407c9d7116fcd9ea87c550cc6fdad6486748d",
       "situacao": "republicado",
       "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada2026-06.zip",
-      "verificado_em": "2026-09-18T13:18:08+00:00"
+      "verificado_em": "2026-10-21T14:16:06+00:00"
     },
     "combinada/202607": {
-      "bytes_zip": 7887832,
+      "bytes_zip": 7893380,
       "coletado_em": "2026-07-24T17:53:13+00:00",
-      "impressao": "29de3d31e36d35513ab35efc59865081bc4752c35eebe00e8dd27fafcb1651c3",
-      "sha256": "58ffc8d705b753a747c4b6af784971b469899590746e7781781bd25cf67c35ec",
+      "impressao": "edbd2476b8e8cfb8d972182e74c9914e4cac546bf8684395ced528e47ea2a660",
+      "sha256": "d18ed96431abfd35f151ac76613efa9173116d5f80c190732f5898efce791610",
       "situacao": "republicado",
       "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada2026-07.zip",
-      "verificado_em": "2026-09-18T13:18:20+00:00"
+      "verificado_em": "2026-10-21T14:16:18+00:00"
     },
     "combinada/202608": {
-      "bytes_zip": 7775833,
+      "bytes_zip": 7784130,
       "coletado_em": "2026-09-18T13:17:31+00:00",
-      "impressao": "1073744d180301249d699ba2e28745a6448d6b989cdab2cd47b61447c5906983",
-      "sha256": "f046b1ea432b203afcd47087b51f407e5276ccaef25a4e02721ef2ec2de19aaf",
-      "situacao": "novo",
+      "impressao": "49d8aed3a1bfdb4117596a1fe31cabc2da2f396c51b9b60c0967fc9601ed3582",
+      "sha256": "5d828b75c3d5508f1d3a631d85cd1fbc8dbbc3d3c9f4881667e2343d68f07f00",
+      "situacao": "republicado",
       "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada2026-08.zip",
-      "verificado_em": "2026-09-18T13:17:31+00:00"
+      "verificado_em": "2026-10-21T14:16:30+00:00"
+    },
+    "combinada/202609": {
+      "bytes_zip": 7047786,
+      "coletado_em": "2026-10-21T14:15:49+00:00",
+      "impressao": "60a54f28bed9f4fb0091d805984cc6a9960f14a9b3032b8cb18713c0d8e435ca",
+      "sha256": "2c82497e7d1171719807270d6ff30cd8d567e286b88660942d707649b53f96a0",
+      "situacao": "novo",
+      "url": "https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/combinada/2026/combinada2026-09.zip",
+      "verificado_em": "2026-10-21T14:15:49+00:00"
     },
     "siros/mensal/2026-09": {
       "coletado_em": "2026-09-09T22:58:50+00:00",
@@ -263,14 +281,14 @@
       "verificado_em": "2026-10-01T15:56:55+00:00"
     },
     "siros/voos": {
-      "bytes_zip": 12259089,
+      "bytes_zip": 12313039,
       "coletado_em": "2026-08-06T15:04:12+00:00",
-      "impressao": "213c298961828a2511a76db008ef0165cade5f78a127ace12f760065c1402028",
-      "publicado_em": "10/20/2026 5:05 AM",
-      "sha256": "9dfbde2e30ca3d0aa4a59ce62a97e3151875ce47acbaa138799d22a93d3a1652",
+      "impressao": "bc0940dd68e72818ce8375a74749765e6847face0079f45020f6179054479aa8",
+      "publicado_em": "10/21/2026 5:05 AM",
+      "sha256": "fdf4c23ad222ba3861f598bc1b6ac5d235f0e43d87dab988fb29fa3201f48cdd",
       "situacao": "atualizado",
       "url": "https://siros.anac.gov.br/siros/registros/voos/voos.zip",
-      "verificado_em": "2026-10-20T13:58:38+00:00"
+      "verificado_em": "2026-10-21T14:14:32+00:00"
     },
     "tarifas/dom/2002": {
       "bytes_zip": 246169,
@@ -849,9 +867,9 @@
       "verificado_em": "2026-07-28T11:29:37+00:00"
     },
     "tarifas/dom/2026": {
-      "bytes_zip": 28652768,
+      "bytes_zip": 32606417,
       "coletado_em": "2026-08-06T15:07:11+00:00",
-      "impressao": "6b8ff9f41a22c1c54e8742bee185046b8c156e22070314f5335dea942dce8a0c",
+      "impressao": "c0afe628a569a303624065b8284651b27b8e41804a016ff3b45da7554c55fb20",
       "meses": {
         "01": "20/03/2026 10:42:46",
         "02": "20/03/2026 10:43:31",
@@ -860,13 +878,14 @@
         "05": "24/06/2026 10:47:03",
         "06": "20/08/2026 10:12:00",
         "07": "20/08/2026 10:11:07",
-        "08": "22/09/2026 10:15:49"
+        "08": "22/09/2026 10:15:49",
+        "09": "21/10/2026 10:29:56"
       },
       "publicado_em": "28/04/2026 10:32:02",
-      "sha256": "018186d374f31e9e7a0f58f94f78f76073b39892a6d7cd82577e8d12328d7bb5",
-      "situacao": "inalterado",
+      "sha256": "c61686c5b0cfb20498b9f7ac2d2a1c0c0618d6cae7a3da17aff1a9328e0cc5c8",
+      "situacao": "atualizado",
       "url": "https://sas.anac.gov.br/sas/downloads/view/frmDownload.aspx",
-      "verificado_em": "2026-10-20T13:58:48+00:00"
+      "verificado_em": "2026-10-21T14:17:52+00:00"
     },
     "tarifas/int/2025": {
       "bytes_zip": 3493301,
@@ -893,20 +912,20 @@
       "verificado_em": "2026-07-25T01:55:38+00:00"
     }
   },
-  "gerado_em": "2026-10-20T14:03:38+00:00",
+  "gerado_em": "2026-10-21T14:36:40+00:00",
   "pagina_microdados": {
-    "atualizado": "18/09/2026 08h45",
+    "atualizado": "20/10/2026 15h54",
     "inventario": {
       "basica": {
-        "total": 320,
-        "ultimo": "202608"
+        "total": 321,
+        "ultimo": "202609"
       },
       "combinada": {
-        "total": 320,
-        "ultimo": "202608"
+        "total": 321,
+        "ultimo": "202609"
       }
     },
     "publicado": "11/08/2020 10h55",
-    "verificado_em": "2026-10-20T13:58:40+00:00"
+    "verificado_em": "2026-10-21T14:14:34+00:00"
   }
 }

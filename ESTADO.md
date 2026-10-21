@@ -1,25 +1,25 @@
 # Estado da coleta
 
-Última execução do robô: **20/10/2026 14:03 UTC**
+Última execução do robô: **21/10/2026 14:36 UTC**
 
 | Fonte | Último período | Publicado no site | Coletado em | Tamanho | Situação |
 |---|---|---|---|---|---|
-| Movimentação — básica | **2026-08** | ver nota ¹ | 18/09/2026 13:16 | 8.7 MB | novo |
-| Movimentação — combinada | **2026-08** | ver nota ¹ | 18/09/2026 13:17 | 7.4 MB | novo |
-| Tarifas — domésticas | **2026-08** | 22/09/2026 10:15:49 | 20/10/2026 13:58 | 27.3 MB | inalterado |
+| Movimentação — básica | **2026-09** | ver nota ¹ | 21/10/2026 14:14 | 8.4 MB | novo |
+| Movimentação — combinada | **2026-09** | ver nota ¹ | 21/10/2026 14:15 | 6.7 MB | novo |
+| Tarifas — domésticas | **2026-09** | 21/10/2026 10:29:56 | 21/10/2026 14:17 | 31.1 MB | atualizado |
 | Tarifas — internacionais | **2025-12** | 10/03/2026 11:59:22 | 25/07/2026 01:55 | 3.3 MB | novo |
-| SIROS — voos futuros | (diário) | 10/20/2026 5:05 AM | 20/10/2026 13:58 | 11.7 MB | atualizado |
+| SIROS — voos futuros | (diário) | 10/21/2026 5:05 AM | 21/10/2026 14:14 | 11.7 MB | atualizado |
 
 ## Cobertura dos microdados
 
 | Segmento | Último no site (coletados de disponíveis) |
 |---|---|
-| básica | 202608 (14 de 320) |
-| combinada | 202608 (14 de 320) |
+| básica | 202609 (15 de 321) |
+| combinada | 202609 (15 de 321) |
 
 Se o número coletado for menor que o total do site, rode `--backfill`.
 
-¹ O servidor dos microdados não informa data por arquivo — só a página inteira, que consta como **atualizada em 18/09/2026 08h45** (publicada em 11/08/2020 10h55). A detecção de republicação usa o tamanho em bytes de cada arquivo.
+¹ O servidor dos microdados não informa data por arquivo — só a página inteira, que consta como **atualizada em 20/10/2026 15h54** (publicada em 11/08/2020 10h55). A detecção de republicação usa o tamanho em bytes de cada arquivo.
 
 ## Republicados na última execução
 
@@ -30,14 +30,16 @@ Se o dado já foi consumido, vale reprocessar:
 - `basica/202603`
 - `basica/202606`
 - `basica/202607`
+- `basica/202608`
 - `combinada/202602`
 - `combinada/202603`
 - `combinada/202606`
 - `combinada/202607`
+- `combinada/202608`
 
 ---
 
-Períodos rastreados: **57**
+Períodos rastreados: **59**
 
 Os CSV/TXT extraídos vão para a pasta do Google Drive. Detalhe técnico
 completo (hash, tamanho, datas por mês) está em `manifest.json`.
