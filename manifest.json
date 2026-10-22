@@ -281,14 +281,14 @@
       "verificado_em": "2026-10-01T15:56:55+00:00"
     },
     "siros/voos": {
-      "bytes_zip": 12313039,
+      "bytes_zip": 12329919,
       "coletado_em": "2026-08-06T15:04:12+00:00",
-      "impressao": "bc0940dd68e72818ce8375a74749765e6847face0079f45020f6179054479aa8",
-      "publicado_em": "10/21/2026 5:05 AM",
-      "sha256": "fdf4c23ad222ba3861f598bc1b6ac5d235f0e43d87dab988fb29fa3201f48cdd",
+      "impressao": "a4092c0d673ee4f7f6ca3fae67dc66d502207e9a4e5ead736fa5f5def2e79fc8",
+      "publicado_em": "10/22/2026 5:05 AM",
+      "sha256": "427d7e0239af5f00ab5e0db65d1ce7b4fe198220d3f465fba5c32b020b326944",
       "situacao": "atualizado",
       "url": "https://siros.anac.gov.br/siros/registros/voos/voos.zip",
-      "verificado_em": "2026-10-21T14:14:32+00:00"
+      "verificado_em": "2026-10-22T14:14:24+00:00"
     },
     "tarifas/dom/2002": {
       "bytes_zip": 246169,
@@ -879,13 +879,13 @@
         "06": "20/08/2026 10:12:00",
         "07": "20/08/2026 10:11:07",
         "08": "22/09/2026 10:15:49",
-        "09": "21/10/2026 10:29:56"
+        "09": "21/10/2026 12:44:51"
       },
       "publicado_em": "28/04/2026 10:32:02",
-      "sha256": "c61686c5b0cfb20498b9f7ac2d2a1c0c0618d6cae7a3da17aff1a9328e0cc5c8",
+      "sha256": "1c38fbf74d9d024af11829ae6e619ec78b61e3d625f6ed52a1e68be9c9e1ce47",
       "situacao": "atualizado",
       "url": "https://sas.anac.gov.br/sas/downloads/view/frmDownload.aspx",
-      "verificado_em": "2026-10-21T14:17:52+00:00"
+      "verificado_em": "2026-10-22T14:15:42+00:00"
     },
     "tarifas/int/2025": {
       "bytes_zip": 3493301,
@@ -912,7 +912,7 @@
       "verificado_em": "2026-07-25T01:55:38+00:00"
     }
   },
-  "gerado_em": "2026-10-21T14:36:40+00:00",
+  "gerado_em": "2026-10-22T14:22:44+00:00",
   "pagina_microdados": {
     "atualizado": "20/10/2026 15h54",
     "inventario": {
@@ -926,6 +926,6 @@
       }
     },
     "publicado": "11/08/2020 10h55",
-    "verificado_em": "2026-10-21T14:14:34+00:00"
+    "verificado_em": "2026-10-22T14:14:25+00:00"
   }
 }
