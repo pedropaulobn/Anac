@@ -1,25 +1,25 @@
 # Estado da coleta
 
-Última execução do robô: **08/11/2026 15:41 UTC**
+Última execução do robô: **09/11/2026 19:25 UTC**
 
 | Fonte | Último período | Publicado no site | Coletado em | Tamanho | Situação |
 |---|---|---|---|---|---|
 | Movimentação — básica | **2026-09** | ver nota ¹ | 21/10/2026 14:14 | 8.4 MB | novo |
 | Movimentação — combinada | **2026-09** | ver nota ¹ | 21/10/2026 14:15 | 6.7 MB | novo |
-| Tarifas — domésticas | **2026-09** | 21/10/2026 12:44:51 | 08/11/2026 15:40 | 31.1 MB | inalterado |
+| Tarifas — domésticas | **2026-09** | 21/10/2026 12:44:51 | 09/11/2026 19:23 | 31.1 MB | inalterado |
 | Tarifas — internacionais | **2025-12** | 10/03/2026 11:59:22 | 25/07/2026 01:55 | 3.3 MB | novo |
-| SIROS — voos futuros | (diário) | 11/8/2026 5:05 AM | 08/11/2026 15:40 | 11.3 MB | atualizado |
+| SIROS — voos futuros | (diário) | 11/9/2026 5:05 AM | 09/11/2026 19:23 | 11.2 MB | atualizado |
 
 ## Cobertura dos microdados
 
 | Segmento | Último no site (coletados de disponíveis) |
 |---|---|
-| básica | 202609 (15 de 321) |
-| combinada | 202609 (15 de 321) |
+| básica | 202605 (15 de 317) |
+| combinada | 202605 (15 de 317) |
 
 Se o número coletado for menor que o total do site, rode `--backfill`.
 
-¹ O servidor dos microdados não informa data por arquivo — só a página inteira, que consta como **atualizada em 20/10/2026 15h54** (publicada em 11/08/2020 10h55). A detecção de republicação usa o tamanho em bytes de cada arquivo.
+¹ O servidor dos microdados não informa data por arquivo — só a página inteira, que consta como **atualizada em —** (publicada em 11/02/2020 11:29). A detecção de republicação usa o tamanho em bytes de cada arquivo.
 
 ## Republicados na última execução
 
