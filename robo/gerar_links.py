@@ -2,7 +2,7 @@
 """gerar_links.py — inventario de links de download da pasta publica.
 
 Roda no GitHub, depois de enviar os arquivos ao Drive. Lista tudo dentro
-de Sync/Fraport/Anac (rclone lsjson traz o ID do Google Drive de cada
+de Sync/05_Work/Fraport/Anac (rclone lsjson traz o ID do Google Drive de cada
 arquivo) e gera um links.csv com:
 
     caminho_relativo;nome;id;url_download
@@ -11,7 +11,7 @@ O url_download usa o endpoint que NAO passa pela pagina de confirmacao de
 virus (funciona para arquivos grandes, ex: Siros de 600+ MB):
     https://drive.usercontent.google.com/download?id=ID&export=download&confirm=t
 
-Esse links.csv e enviado para a raiz de Sync/Fraport/Anac no Drive. O PC
+Esse links.csv e enviado para a raiz de Sync/05_Work/Fraport/Anac no Drive. O PC
 corporativo baixa so esse CSV (link publico fixo), le a lista e baixa cada
 arquivo via curl -- sem nunca logar no Google Drive.
 
@@ -81,7 +81,7 @@ def gerar_csv(itens: list[dict], destino_local: Path) -> Path:
 
 
 def enviar_lista(caminho_local: Path) -> bool:
-    """Envia o links.csv para a raiz de Sync/Fraport/Anac no Drive."""
+    """Envia o links.csv para a raiz de Sync/05_Work/Fraport/Anac no Drive."""
     exe = comum.rclone_bin()
     destino = f"{DRIVE_ANAC}/"
     cmd = [exe, "copy", str(caminho_local), destino, "--verbose"]

@@ -13,7 +13,7 @@ nunca derruba o run e o arquivo ja esta no Drive para retentar.
                               domesticos de POA/FOR/JJD (frequencia + assentos).
 
 Ambos sao SUBSTITUIDOS a cada rodada (a base e a malha "vista de hoje").
-Destino no Drive: gdrive:Sync/Fraport/Anac/Siros/BigQuery/
+Destino no Drive: gdrive:Sync/05_Work/Fraport/Anac/Siros/BigQuery/
 
 Nunca derruba o run principal: qualquer excecao e logada e engolida por
 quem chama (ver robo/main.py, _processar_siros).

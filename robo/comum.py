@@ -239,8 +239,8 @@ def extrair(conteudo_zip: bytes, destino: Path) -> list[Path]:
     return escritos
 
 
-# Raiz da nova estrutura no Drive. Tudo pende de Sync/Fraport.
-DRIVE_RAIZ = "gdrive:Sync/Fraport"
+# Raiz da nova estrutura no Drive. Tudo pende de Sync/05_Work/Fraport.
+DRIVE_RAIZ = "gdrive:Sync/05_Work/Fraport"
 DRIVE_BASES = f"{DRIVE_RAIZ}/Bases"
 
 
@@ -392,7 +392,7 @@ def baixar_bases_drive() -> Path | None:
     """Baixa as bases auxiliares do Drive para _tmp/bases/ via rclone.
 
     As dimensoes (Aircraft, Airports, Airlines) e o cache de cambio
-    (dolar.csv) vivem em Sync/Fraport/Bases/. O .bat garante que essa
+    (dolar.csv) vivem em Sync/05_Work/Fraport/Bases/. O .bat garante que essa
     pasta tem sempre a versao mais recente (corp = pessoal = Drive).
 
     O robo do GitHub le essa pasta antes de processar, porque nao tem
