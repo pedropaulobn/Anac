@@ -1,14 +1,14 @@
 # Estado da coleta
 
-Última execução do robô: **17/11/2026 18:01 UTC**
+Última execução do robô: **18/11/2026 17:42 UTC**
 
 | Fonte | Último período | Publicado no site | Coletado em | Tamanho | Situação |
 |---|---|---|---|---|---|
 | Movimentação — básica | **2026-09** | ver nota ¹ | 21/10/2026 14:14 | 8.4 MB | novo |
 | Movimentação — combinada | **2026-09** | ver nota ¹ | 21/10/2026 14:15 | 6.7 MB | novo |
-| Tarifas — domésticas | **2026-09** | 21/10/2026 12:44:51 | 17/11/2026 17:59 | 31.1 MB | inalterado |
+| Tarifas — domésticas | **2026-09** | 21/10/2026 12:44:51 | 18/11/2026 17:41 | 31.1 MB | inalterado |
 | Tarifas — internacionais | **2025-12** | 10/03/2026 11:59:22 | 25/07/2026 01:55 | 3.3 MB | novo |
-| SIROS — voos futuros | (diário) | 11/17/2026 5:04 AM | 17/11/2026 17:59 | 11.0 MB | atualizado |
+| SIROS — voos futuros | (diário) | 11/18/2026 5:04 AM | 18/11/2026 17:41 | 11.1 MB | atualizado |
 
 ## Cobertura dos microdados
 
