@@ -286,14 +286,14 @@
       "verificado_em": "2026-11-01T15:39:46+00:00"
     },
     "siros/voos": {
-      "bytes_zip": 11667390,
+      "bytes_zip": 11630251,
       "coletado_em": "2026-08-06T15:04:12+00:00",
-      "impressao": "a668b738363067ae8c4840455b8dab9e9c266d99f5626214759f680f9af71369",
-      "publicado_em": "11/18/2026 5:04 AM",
-      "sha256": "54b9629fcc9bac1258e68f4e493a4554d07a6bb03b039182ebf8972f5a216d4b",
+      "impressao": "b8f1a610ee83f1c5c315adc94e9e2f955523465805550ea0be1879ed6a0a2d1f",
+      "publicado_em": "11/19/2026 5:05 AM",
+      "sha256": "109fa9f3fca13f80dd8f4b5dec5d1b5a24510bfc3d37395843e34044ed99bb1c",
       "situacao": "atualizado",
       "url": "https://siros.anac.gov.br/siros/registros/voos/voos.zip",
-      "verificado_em": "2026-11-18T17:41:25+00:00"
+      "verificado_em": "2026-11-19T17:50:22+00:00"
     },
     "tarifas/dom/2002": {
       "bytes_zip": 246169,
@@ -917,7 +917,7 @@
       "verificado_em": "2026-07-25T01:55:38+00:00"
     }
   },
-  "gerado_em": "2026-11-18T17:42:58+00:00",
+  "gerado_em": "2026-11-19T17:52:37+00:00",
   "pagina_microdados": {
     "atualizado": null,
     "inventario": {
@@ -931,6 +931,6 @@
       }
     },
     "publicado": "11/02/2020 11:29",
-    "verificado_em": "2026-11-18T17:41:27+00:00"
+    "verificado_em": "2026-11-19T17:50:26+00:00"
   }
 }
