@@ -1,21 +1,21 @@
 # Estado da coleta
 
-Última execução do robô: **24/11/2026 19:51 UTC**
+Última execução do robô: **25/11/2026 18:56 UTC**
 
 | Fonte | Último período | Publicado no site | Coletado em | Tamanho | Situação |
 |---|---|---|---|---|---|
 | Movimentação — básica | **2026-09** | ver nota ¹ | 21/10/2026 14:14 | 8.4 MB | novo |
 | Movimentação — combinada | **2026-09** | ver nota ¹ | 21/10/2026 14:15 | 6.7 MB | novo |
-| Tarifas — domésticas | **2026-10** | 19/11/2026 09:50:30 | 24/11/2026 19:49 | 57.6 MB | inalterado |
+| Tarifas — domésticas | **2026-10** | 19/11/2026 09:50:30 | 25/11/2026 18:55 | 57.6 MB | inalterado |
 | Tarifas — internacionais | **2025-12** | 10/03/2026 11:59:22 | 25/07/2026 01:55 | 3.3 MB | novo |
-| SIROS — voos futuros | (diário) | 11/24/2026 5:05 AM | 24/11/2026 19:48 | 11.5 MB | atualizado |
+| SIROS — voos futuros | (diário) | 11/25/2026 5:05 AM | 25/11/2026 18:54 | 11.5 MB | atualizado |
 
 ## Cobertura dos microdados
 
 | Segmento | Último no site (coletados de disponíveis) |
 |---|---|
-| básica | 202605 (15 de 317) |
-| combinada | 202605 (15 de 317) |
+| básica | — |
+| combinada | — |
 
 Se o número coletado for menor que o total do site, rode `--backfill`.
 
